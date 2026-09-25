@@ -34,8 +34,8 @@ export default function Navbar() {
       <div className={`site-shell !px-0 transition-all duration-300 ${scrolled ? "" : ""}`}>
         <nav className={`flex items-center justify-between rounded-2xl border px-3 py-2 transition-all ${scrolled ? "border-black/10 bg-[#fffdf8]/95 shadow-[0_12px_40px_rgba(8,20,47,.08)] backdrop-blur-xl" : "border-white/60 bg-white/80 backdrop-blur-xl"}`}>
           <Link href="/" className="flex items-center gap-2.5">
-            <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-white">
-              <Image src="/logo.png" alt="YouthAura Labs" width={48} height={48} className="h-10 w-10 object-cover object-left" priority />
+            <span className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl bg-white">
+              <Image src="/logo.png" alt="YouthAura Labs" width={64} height={64} className="h-14 w-14 object-cover object-left" priority />
             </span>
             <span className="font-display text-[17px] font-bold tracking-[-0.04em] text-ink">YouthAura <span className="text-primary">Labs</span></span>
           </Link>

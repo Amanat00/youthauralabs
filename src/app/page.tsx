@@ -14,11 +14,15 @@ const tracks = [
 ];
 
 const faqs = [
-  { question: "Who can apply to YouthAura Labs?", answer: "University students and early-career job seekers who want stronger career fundamentals and practical market-ready skills." },
-  { question: "How long is the cohort?", answer: "The core cohort experience is structured around twelve focused weeks of career readiness, specialization work and practical output." },
-  { question: "Is it online or in person?", answer: "Core learning can run online across Pakistan, while local orientations, workshops and activities can be offered onsite in Okara depending on the cohort." },
-  { question: "Do I need prior professional experience?", answer: "No. The program is designed for learners who are still building experience. A laptop and stable internet connection are recommended for practical sessions." },
-  { question: "What happens after I apply?", answer: "Applications are reviewed for cohort fit. Selected candidates receive onboarding details and their next steps by email or WhatsApp." },
+  { question: "Who can apply to YouthAura Labs?", answer: "University students, fresh graduates, and early-career professionals who want practical, market-ready skills and stronger career fundamentals." },
+  { question: "How long is the cohort?", answer: "The core program runs for 12 focused weeks, combining career readiness, specialization training, mentorship and practical projects." },
+  { question: "Is it online or in person?", answer: "The program is online for participants across Pakistan, with onsite sessions available in Okara." },
+  { question: "Do I need prior professional experience?", answer: "No. The program is designed for learners who are building their skills and experience. A laptop and stable internet connection are recommended." },
+  { question: "What tracks can I choose from?", answer: "Participants can choose from tracks including Freelancing, E-commerce, Digital Marketing, Social Media Handling, Graphic Designing, AI Automation, Applied AI, Project Management, Web Development Awareness and Business Development." },
+  { question: "What will I gain from the program?", answer: "You will work on practical projects, develop track-specific skills, build portfolio-ready work and gain guidance for applying your skills to real career opportunities." },
+  { question: "Will I receive a certificate?", answer: "Yes. Participants will receive a certificate from YouthAura Labs upon completion of the program." },
+  { question: "Will I receive mentorship?", answer: "Yes. Participants will receive guidance and feedback from mentors throughout the program and their practical projects." },
+  { question: "What happens after completing the program?", answer: "You will have practical project work, stronger career readiness and a clearer direction for applying your skills to freelance, employment or business opportunities." },
 ];
 
 export default function HomePage() {
@@ -64,7 +68,7 @@ export default function HomePage() {
       </section>
 
       <section className="section-space bg-ink text-white">
-        <div className="site-shell"><span className="eyebrow !text-[#ff9b68]">Why YouthAura Labs</span><div className="mt-5 flex flex-col justify-between gap-7 lg:flex-row lg:items-end"><h2 className="section-title max-w-3xl">From “I know this” to <span className="text-primary">“here’s what I’ve built.”</span></h2><p className="max-w-md leading-7 text-white/50">A career-readiness experience built around practical output, personal growth and skills that can be demonstrated.</p></div>
+        <div className="site-shell"><span className="eyebrow !text-[#ff9b68]">Why YouthAura Labs</span><div className="mt-5 flex flex-col justify-between gap-7 lg:flex-row lg:items-end"><h2 className="section-title max-w-3xl">From “I know this” to <span className="text-primary">“here’s what I’ve built.”</span></h2><p className="max-w-md leading-7 text-white/50">A 12-week career readiness experience designed to help young professionals build practical skills, build real projects, strengthen their professional pressure and take their next career step with confidence.</p></div>
           <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {[[BadgeCheck,"Proof over certificates","Build practical artifacts instead of collecting passive credentials."],[Users,"Small cohorts","Feedback, accountability and participation matter in every group."],[Bot,"AI-era readiness","Modern tools and workflows are part of the learning experience."],[GraduationCap,"Career fundamentals","Resume, LinkedIn, interviews, communication and professional habits."]].map(([Icon,t,d],i)=>{const I=Icon as typeof BadgeCheck; return <article key={String(t)} className="min-h-[300px] rounded-[26px] border border-white/10 bg-white/[.04] p-7"><I className="size-6 text-primary"/><div className="mt-24"><p className="text-[11px] font-bold tracking-[.18em] text-white/35">0{i+1}</p><h3 className="mt-2 text-xl font-bold">{String(t)}</h3><p className="mt-3 text-sm leading-7 text-white/48">{String(d)}</p></div></article>})}
           </div>

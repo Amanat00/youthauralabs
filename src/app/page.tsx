@@ -16,7 +16,7 @@ const tracks = [
 const faqs = [
   { question: "Who can apply to YouthAura Labs?", answer: "University students and early-career job seekers who want stronger career fundamentals and practical market-ready skills." },
   { question: "How long is the cohort?", answer: "The core cohort experience is structured around twelve focused weeks of career readiness, specialization work and practical output." },
-  { question: "Is it online or in person?", answer: "Core learning can run online across Pakistan, while local orientations, workshops and activities can be offered onsite in Lahore depending on the cohort." },
+  { question: "Is it online or in person?", answer: "Core learning can run online across Pakistan, while local orientations, workshops and activities can be offered onsite in Okara depending on the cohort." },
   { question: "Do I need prior professional experience?", answer: "No. The program is designed for learners who are still building experience. A laptop and stable internet connection are recommended for practical sessions." },
   { question: "What happens after I apply?", answer: "Applications are reviewed for cohort fit. Selected candidates receive onboarding details and their next steps by email or WhatsApp." },
 ];
@@ -33,14 +33,14 @@ export default function HomePage() {
             <h1 className="hero-title mt-7 max-w-3xl text-ink">Build the proof <span className="text-primary">your degree can’t show.</span></h1>
             <p className="mt-7 max-w-2xl text-[18px] leading-8 text-slate-600">Turn your potential into practical skills, real work and career confidence through mentor-led learning, specialization tracks and hands-on projects.</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row"><Link href="/apply" className="btn-primary">Apply for next cohort <ArrowUpRight className="size-4" /></Link><Link href="/programs" className="btn-outline">Explore programs <ArrowRight className="size-4" /></Link></div>
-            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-ink/55"><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-primary" />Lahore onsite</span><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-primary" />Online across Pakistan</span><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-primary" />Small cohorts</span></div>
+            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-ink/55"><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-primary" />Okara onsite</span><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-primary" />Online across Pakistan</span><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-primary" />Small cohorts</span></div>
           </div>
 
           <div className="relative mx-auto w-full max-w-[590px]">
             <div className="absolute -left-5 top-16 z-20 hidden rounded-2xl bg-ink px-5 py-4 text-white shadow-2xl sm:block"><p className="text-[10px] font-bold uppercase tracking-[.2em] text-white/45">The goal</p><p className="mt-1 font-display text-lg font-bold">Built, not just learned.</p></div>
-            <div className="relative overflow-hidden rounded-[34px] border border-black/[.06] bg-ink p-3 shadow-[0_32px_90px_rgba(8,20,47,.15)]">
+            <div className="hero-front-card relative overflow-hidden rounded-[34px] border border-black/[.06] bg-ink p-3 shadow-[0_32px_90px_rgba(8,20,47,.15)]">
               <div className="relative h-[560px] overflow-hidden rounded-[26px]">
-                <Image src="/hero-energy.jpg" alt="YouthAura Labs career energy" fill priority className="object-cover" />
+                <Image src="/Diverse-Teamwork.webp" alt="YouthAura Labs career energy" fill priority className="object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-7 text-white"><p className="text-xs font-bold uppercase tracking-[.18em] text-primary">Career readiness</p><p className="mt-3 max-w-md font-display text-[25px] font-bold leading-tight">Practical work. Direct feedback. Skills you can explain and demonstrate.</p></div>
               </div>

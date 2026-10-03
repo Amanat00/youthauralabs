@@ -70,3 +70,31 @@
 
 .marquee-track { animation: marquee-x 34s linear infinite; }
 @keyframes marquee-x { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+
+/* =========================================
+   EXISTING CARDS - PROFESSIONAL ANIMATION
+   No JSX changes required
+========================================= */
+
+.surface-card,
+.hero-front-card,
+article {
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease,
+    border-color 0.35s ease !important;
+}
+
+/* Existing cards hover */
+.surface-card:hover,
+.hero-front-card:hover,
+article:hover {
+  transform: translateY(-6px) scale(1.01) !important;
+
+  box-shadow:
+    0 22px 50px rgba(8, 20, 47, 0.14),
+    0 8px 18px rgba(8, 20, 47, 0.06) !important;
+
+  border-color: rgba(255, 90, 18, 0.22) !important;
+}

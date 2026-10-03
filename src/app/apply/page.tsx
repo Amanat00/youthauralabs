@@ -68,7 +68,7 @@ export default function ApplyPage() {
           <p className="eyebrow mt-7 justify-center">Application received</p>
           <h1 className="mt-4 text-4xl font-bold text-ink">You’re in the review queue.</h1>
           <p className="mx-auto mt-5 max-w-xl leading-7 text-slate-500">Your application has been saved for review. You can now return to the site or join the community while you wait for the next update.</p>
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row"><a href="https://chat.whatsapp.com/REPLACE-WITH-YOUR-INVITE-CODE" className="btn-primary">Join WhatsApp community</a><Link href="/" className="btn-outline">Back to home</Link></div>
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row"><a href="https://chat.whatsapp.com/FYnPFPS9lYi9FDV7txhSnN" className="btn-primary">Join WhatsApp community</a><Link href="/" className="btn-outline">Back to home</Link></div>
         </div>
       ) : (
         <div className="grid gap-10 lg:grid-cols-[.68fr_1.32fr]">
@@ -85,7 +85,7 @@ export default function ApplyPage() {
                 <Field label="Full name *"><input required maxLength={120} value={formData.fullName} onChange={(e)=>setFormData({...formData,fullName:e.target.value})} placeholder="e.g. Ali Ahmed" className={fieldClass}/></Field>
                 <Field label="Email address *"><input required type="email" value={formData.email} onChange={(e)=>setFormData({...formData,email:e.target.value})} placeholder="you@example.com" className={fieldClass}/></Field>
                 <Field label="Phone number *"><input required type="tel" value={formData.phone} onChange={(e)=>setFormData({...formData,phone:e.target.value})} placeholder="+92 300 1234567" className={fieldClass}/></Field>
-                <Field label="City *"><input required value={formData.city} onChange={(e)=>setFormData({...formData,city:e.target.value})} placeholder="Lahore" className={fieldClass}/></Field>
+                <Field label="City *"><input required value={formData.city} onChange={(e)=>setFormData({...formData,city:e.target.value})} placeholder="Okara" className={fieldClass}/></Field>
                 <Field label="Age *"><input required type="number" min={14} max={80} value={formData.age} onChange={(e)=>setFormData({...formData,age:e.target.value})} placeholder="21" className={fieldClass}/></Field>
               </div>
             </FormSection>

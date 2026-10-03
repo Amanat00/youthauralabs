@@ -32,7 +32,7 @@ export default function CommunityPage() {
             <p className="mt-7 max-w-2xl text-[18px] leading-8 text-white/60">
               YouthAura Labs is designed to connect ambitious learners with peers, mentors, resources and opportunities before, during and after the cohort.
             </p>
-            <a href="https://chat.whatsapp.com/REPLACE-WITH-YOUR-INVITE-CODE" className="btn-primary mt-8">
+            <a href="https://chat.whatsapp.com/FYnPFPS9lYi9FDV7txhSnN" className="btn-primary mt-8">
               <MessageCircle className="size-4" />
               Join WhatsApp community
             </a>
@@ -122,7 +122,7 @@ export default function CommunityPage() {
             <p className="mt-5 max-w-xl text-[17px] leading-8 text-slate-600">
               Join the WhatsApp circle for updates, opportunities and community conversations. Replace the placeholder invite URL before launch.
             </p>
-            <a href="https://chat.whatsapp.com/REPLACE-WITH-YOUR-INVITE-CODE" className="btn-dark mt-7">
+            <a href="https://chat.whatsapp.com/FYnPFPS9lYi9FDV7txhSnN" className="btn-dark mt-7">
               <MessageCircle className="size-4" />
               Join WhatsApp community
             </a>

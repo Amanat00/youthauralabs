@@ -24,16 +24,76 @@ export const metadata = {
 };
 
 const tracks = [
-  ["Freelancing", "Shape a market-ready offer, profile and client acquisition approach.", BriefcaseBusiness, "Career"],
-  ["E-commerce", "Understand the building blocks of selling products online.", ShoppingBag, "Commerce"],
-  ["Digital Marketing", "Learn audience, content, campaign and channel fundamentals.", Megaphone, "Marketing"],
-  ["Social Media Handling", "Plan content and manage a brand’s social presence with purpose.", Users, "Marketing"],
-  ["Graphic Designing", "Create portfolio-ready visual work and sharpen design fundamentals.", Palette, "Creative"],
-  ["AI Automation", "Build useful AI-powered workflows for practical tasks.", Workflow, "AI"],
-  ["Applied AI Across Industries", "Learn how AI can support work in different professional contexts.", Bot, "AI"],
-  ["Project Management", "Plan, coordinate and communicate a small project with structure.", Target, "Management"],
-  ["Web Development Awareness", "Understand modern web workflows well enough to brief, review and improve builds.", Code2, "Digital"],
-  ["Business Development", "Practice outreach, pitching, relationship building and client conversations.", Rocket, "Business"],
+  [
+    "Freelancing",
+    "Shape a market-ready offer, profile and client acquisition approach.",
+    BriefcaseBusiness,
+    "Career",
+    "freelancing",
+  ],
+  [
+    "E-commerce",
+    "Understand the building blocks of selling products online.",
+    ShoppingBag,
+    "Commerce",
+    "e-commerce",
+  ],
+  [
+    "Digital Marketing",
+    "Learn audience, content, campaign and channel fundamentals.",
+    Megaphone,
+    "Marketing",
+    "digital-marketing",
+  ],
+  [
+    "Social Media Handling",
+    "Plan content and manage a brand’s social presence with purpose.",
+    Users,
+    "Marketing",
+    "social-media-handling",
+  ],
+  [
+    "Graphic Designing",
+    "Create portfolio-ready visual work and sharpen design fundamentals.",
+    Palette,
+    "Creative",
+    "graphic-designing",
+  ],
+  [
+    "AI Automation",
+    "Build useful AI-powered workflows for practical tasks.",
+    Workflow,
+    "AI",
+    "ai-automation",
+  ],
+  [
+    "Applied AI Across Industries",
+    "Learn how AI can support work in different professional contexts.",
+    Bot,
+    "AI",
+    "applied-ai-across-industries",
+  ],
+  [
+    "Project Management",
+    "Plan, coordinate and communicate a small project with structure.",
+    Target,
+    "Management",
+    "project-management",
+  ],
+  [
+    "Web Development Awareness",
+    "Understand modern web workflows well enough to brief, review and improve builds.",
+    Code2,
+    "Digital",
+    "web-development-awareness",
+  ],
+  [
+    "Business Development",
+    "Practice outreach, pitching, relationship building and client conversations.",
+    Rocket,
+    "Business",
+    "business-development",
+  ],
 ];
 
 export default function ProgramsPage() {
@@ -168,27 +228,49 @@ export default function ProgramsPage() {
         </div>
 
         <div className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {tracks.map(([title, desc, Icon, tag], i) => {
-            const I = Icon as typeof Bot;
-            return (
-              <article key={String(title)} className="surface-card flex min-h-[280px] flex-col justify-between p-7 transition hover:-translate-y-1">
-                <div className="flex items-start justify-between gap-3">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary text-royal">
-                    <I className="size-5" />
-                  </span>
-                  <span className="rounded-full bg-accent px-3 py-1 text-[10px] font-bold uppercase tracking-[.16em] text-primary">
-                    {String(tag)}
-                  </span>
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-300">{String(i + 1).padStart(2, "0")}</p>
-                  <h3 className="mt-2 text-2xl font-bold text-ink">{String(title)}</h3>
-                  <p className="mt-3 leading-7 text-slate-500">{String(desc)}</p>
-                </div>
-              </article>
-            );
-          })}
-        </div>
+  {tracks.map(([title, desc, Icon, tag, slug], i) => {
+    const I = Icon as typeof Bot;
+
+    return (
+      <Link
+        key={String(title)}
+        href={`/programs/${String(slug)}`}
+        className="group block"
+      >
+        <article className="surface-card flex min-h-[300px] h-full flex-col justify-between p-7 transition hover:-translate-y-1">
+          <div className="flex items-start justify-between gap-3">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary text-royal">
+              <I className="size-5" />
+            </span>
+
+            <span className="rounded-full bg-accent px-3 py-1 text-[10px] font-bold uppercase tracking-[.16em] text-primary">
+              {String(tag)}
+            </span>
+          </div>
+
+          <div>
+            <p className="text-xs font-bold text-slate-300">
+              {String(i + 1).padStart(2, "0")}
+            </p>
+
+            <h3 className="mt-2 text-2xl font-bold text-ink">
+              {String(title)}
+            </h3>
+
+            <p className="mt-3 leading-7 text-slate-500">
+              {String(desc)}
+            </p>
+
+            <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-primary">
+              View roadmap
+              <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </span>
+          </div>
+        </article>
+      </Link>
+    );
+  })}
+</div>
       </section>
 
       <section className="section-space bg-[#fff8f1]">

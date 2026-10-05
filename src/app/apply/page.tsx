@@ -23,6 +23,7 @@ export default function ApplyPage() {
   const [submitting, setSubmitting] = useState(false);
   const [selectedTracks, setSelectedTracks] = useState<string[]>([]);
   const [resumeName, setResumeName] = useState<string | null>(null);
+  const [transcriptName, setTranscriptName] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -44,6 +45,13 @@ export default function ApplyPage() {
 
   const toggleTrack = (track: string) => setSelectedTracks((prev) => prev.includes(track) ? prev.filter((t) => t !== track) : [...prev, track]);
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => { if (e.target.files?.[0]) setResumeName(e.target.files[0].name); };
+  const handleTranscriptChange = (
+  e: React.ChangeEvent<HTMLInputElement>
+) => {
+  if (e.target.files?.[0]) {
+    setTranscriptName(e.target.files[0].name);
+  }
+};
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +60,15 @@ export default function ApplyPage() {
     setSubmitting(true);
     try {
       const existing = JSON.parse(localStorage.getItem("youthaura_applications") || "[]");
-      const newApp = { id: `app_${Date.now()}`, ...formData, tracks: selectedTracks, resumeName: resumeName || "None attached", submittedAt: new Date().toISOString(), status: "Pending" };
+     const newApp = {
+  id: `app_${Date.now()}`,
+  ...formData,
+  tracks: selectedTracks,
+  resumeName: resumeName || "None attached",
+  transcriptName: transcriptName || "None attached",
+  submittedAt: new Date().toISOString(),
+  status: "Pending",
+};
       localStorage.setItem("youthaura_applications", JSON.stringify([newApp, ...existing]));
     } catch {}
     setTimeout(() => { setSubmitting(false); setSubmitted(true); window.scrollTo({ top: 0, behavior: "smooth" }); }, 650);
@@ -106,11 +122,91 @@ export default function ApplyPage() {
             </FormSection>
 
             <FormSection index="04" title="Proof & links">
-              <label className="block text-sm font-bold text-ink">Resume upload</label>
-              <label htmlFor="resume" className="mt-2 flex cursor-pointer items-center justify-between gap-4 rounded-2xl border-2 border-dashed border-black/10 bg-[#fbfaf7] px-5 py-6 transition hover:border-primary/40"><span className="flex items-center gap-3 text-sm text-slate-500"><FileUp className="size-5 text-primary"/>{resumeName || "Choose PDF, DOC or DOCX"}</span>{resumeName && <span className="text-xs font-bold text-primary">Attached</span>}</label>
-              <input id="resume" type="file" accept=".pdf,.doc,.docx" onChange={handleFileChange} className="sr-only" />
-              <div className="mt-5"><Field label="Portfolio link"><input type="url" value={formData.portfolioUrl} onChange={(e)=>setFormData({...formData,portfolioUrl:e.target.value})} placeholder="https://yourportfolio.com" className={fieldClass}/></Field></div>
-            </FormSection>
+  {/* Resume Upload */}
+  <label className="block text-sm font-bold text-ink">
+    Resume upload
+  </label>
+
+  <label
+    htmlFor="resume"
+    className="mt-2 flex cursor-pointer items-center justify-between gap-4 rounded-2xl border-2 border-dashed border-black/10 bg-[#fbfaf7] px-5 py-6 transition hover:border-primary/40"
+  >
+    <span className="flex items-center gap-3 text-sm text-slate-500">
+      <FileUp className="size-5 text-primary" />
+      {resumeName || "Choose PDF, DOC or DOCX"}
+    </span>
+
+    {resumeName && (
+      <span className="text-xs font-bold text-primary">
+        Attached
+      </span>
+    )}
+  </label>
+
+  <input
+    id="resume"
+    type="file"
+    accept=".pdf,.doc,.docx"
+    onChange={handleFileChange}
+    className="sr-only"
+  />
+
+  {/* Transcript / Certificate Upload */}
+  <div className="mt-6">
+    <label className="block text-sm font-bold text-ink">
+      Transcript / Certificate
+      <span className="ml-2 text-xs font-medium text-slate-400">
+        Optional
+      </span>
+    </label>
+
+    <p className="mt-1 text-xs leading-5 text-slate-400">
+      Upload your academic transcript, degree or relevant certificate.
+    </p>
+
+    <label
+      htmlFor="transcript"
+      className="mt-2 flex cursor-pointer items-center justify-between gap-4 rounded-2xl border-2 border-dashed border-black/10 bg-[#fbfaf7] px-5 py-6 transition hover:border-primary/40"
+    >
+      <span className="flex items-center gap-3 text-sm text-slate-500">
+        <FileUp className="size-5 text-primary" />
+        {transcriptName || "Choose PDF, JPG, PNG, DOC or DOCX"}
+      </span>
+
+      {transcriptName && (
+        <span className="text-xs font-bold text-primary">
+          Attached
+        </span>
+      )}
+    </label>
+
+    <input
+      id="transcript"
+      type="file"
+      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+      onChange={handleTranscriptChange}
+      className="sr-only"
+    />
+  </div>
+
+  {/* Portfolio */}
+  <div className="mt-6">
+    <Field label="Portfolio link">
+      <input
+        type="url"
+        value={formData.portfolioUrl}
+        onChange={(e) =>
+          setFormData({
+            ...formData,
+            portfolioUrl: e.target.value,
+          })
+        }
+        placeholder="https://yourportfolio.com"
+        className={fieldClass}
+      />
+    </Field>
+  </div>
+</FormSection>
 
             <label className="flex cursor-pointer items-start gap-3 rounded-2xl bg-secondary p-4"><input type="checkbox" required checked={formData.agreed} onChange={(e)=>setFormData({...formData,agreed:e.target.checked})} className="mt-1 size-4 accent-[#ff5a12]"/><span className="text-sm leading-6 text-slate-600">I confirm the information above is accurate and I agree to the attendance expectations and community conduct rules.</span></label>
 

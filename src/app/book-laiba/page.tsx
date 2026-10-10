@@ -297,241 +297,236 @@ export default function BookLaibaPage() {
   }
 
   function downloadReceipt() {
-    if (!selectedSlot || !selectedOption) return;
+  if (!selectedSlot || !selectedOption) return;
 
-    const canvas = document.createElement("canvas");
+  const canvas = document.createElement("canvas");
 
-    canvas.width = 1400;
-    canvas.height = 1000;
+  canvas.width = 1400;
+  canvas.height = 1000;
 
-    const ctx = canvas.getContext("2d");
+  const context = canvas.getContext("2d");
 
-    if (!ctx) return;
-
-    function drawRoundedRectangle(
-      x: number,
-      y: number,
-      width: number,
-      height: number,
-      radius: number,
-      fillColor: string
-    ) {
-      ctx.beginPath();
-
-      ctx.moveTo(x + radius, y);
-
-      ctx.lineTo(
-        x + width - radius,
-        y
-      );
-
-      ctx.quadraticCurveTo(
-        x + width,
-        y,
-        x + width,
-        y + radius
-      );
-
-      ctx.lineTo(
-        x + width,
-        y + height - radius
-      );
-
-      ctx.quadraticCurveTo(
-        x + width,
-        y + height,
-        x + width - radius,
-        y + height
-      );
-
-      ctx.lineTo(
-        x + radius,
-        y + height
-      );
-
-      ctx.quadraticCurveTo(
-        x,
-        y + height,
-        x,
-        y + height - radius
-      );
-
-      ctx.lineTo(
-        x,
-        y + radius
-      );
-
-      ctx.quadraticCurveTo(
-        x,
-        y,
-        x + radius,
-        y
-      );
-
-      ctx.closePath();
-
-      ctx.fillStyle = fillColor;
-      ctx.fill();
-    }
-
-    // Background
-    ctx.fillStyle = "#ecfdf5";
-    ctx.fillRect(
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
-
-    // Success circle
-    ctx.beginPath();
-    ctx.arc(
-      700,
-      130,
-      58,
-      0,
-      Math.PI * 2
-    );
-
-    ctx.fillStyle = "#16a34a";
-    ctx.fill();
-
-    // Check mark
-    ctx.strokeStyle = "#ffffff";
-    ctx.lineWidth = 10;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-
-    ctx.beginPath();
-    ctx.moveTo(670, 130);
-    ctx.lineTo(692, 152);
-    ctx.lineTo(732, 108);
-    ctx.stroke();
-
-    // Main heading
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#08142f";
-    ctx.font =
-      "700 48px Arial, sans-serif";
-
-    ctx.fillText(
-      "Consultation Booked Successfully",
-      700,
-      260
-    );
-
-    // Description
-    ctx.fillStyle = "#374151";
-    ctx.font =
-      "28px Arial, sans-serif";
-
-    ctx.fillText(
-      "Your consultation with Laiba Hashmi has been booked successfully.",
-      700,
-      325
-    );
-
-    ctx.fillText(
-      "Please check your email for the Calendly confirmation and meeting details.",
-      700,
-      370
-    );
-
-    // Booking details card
-    drawRoundedRectangle(
-      130,
-      445,
-      1140,
-      385,
-      42,
-      "#ffffff"
-    );
-
-    ctx.textAlign = "left";
-
-    // Card heading
-    ctx.fillStyle = "#ff5a12";
-    ctx.font =
-      "700 22px Arial, sans-serif";
-
-    ctx.fillText(
-      "BOOKING DETAILS",
-      190,
-      515
-    );
-
-    // Consultation title
-    ctx.fillStyle = "#08142f";
-    ctx.font =
-      "700 34px Arial, sans-serif";
-
-    ctx.fillText(
-      selectedOption.title,
-      190,
-      590
-    );
-
-    // Date
-    ctx.fillStyle = "#374151";
-    ctx.font =
-      "28px Arial, sans-serif";
-
-    ctx.fillText(
-      formatFullDate(
-        selectedSlot.startTime
-      ),
-      190,
-      655
-    );
-
-    // Time
-    ctx.fillText(
-      `${formatTime(
-        selectedSlot.startTime
-      )} PKT`,
-      190,
-      710
-    );
-
-    // Fee
-    ctx.fillStyle = "#ff5a12";
-    ctx.font =
-      "700 38px Arial, sans-serif";
-
-    ctx.fillText(
-      selectedOption.price,
-      190,
-      780
-    );
-
-    // Footer text
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#6b7280";
-    ctx.font =
-      "22px Arial, sans-serif";
-
-    ctx.fillText(
-      "YouthAura Labs • Consultation Booking Confirmation",
-      700,
-      920
-    );
-
-    // Download PNG
-    const link =
-      document.createElement("a");
-
-    link.download =
-      "YouthAura-Consultation-Booking-Receipt.png";
-
-    link.href =
-      canvas.toDataURL("image/png");
-
-    document.body.appendChild(link);
-
-    link.click();
-
-    document.body.removeChild(link);
+  if (!context) {
+    console.error("Unable to create receipt canvas.");
+    return;
   }
+
+  const ctx: CanvasRenderingContext2D = context;
+
+  function drawRoundedRectangle(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    radius: number,
+    fillColor: string
+  ) {
+    ctx.beginPath();
+
+    ctx.moveTo(x + radius, y);
+
+    ctx.lineTo(x + width - radius, y);
+
+    ctx.quadraticCurveTo(
+      x + width,
+      y,
+      x + width,
+      y + radius
+    );
+
+    ctx.lineTo(
+      x + width,
+      y + height - radius
+    );
+
+    ctx.quadraticCurveTo(
+      x + width,
+      y + height,
+      x + width - radius,
+      y + height
+    );
+
+    ctx.lineTo(
+      x + radius,
+      y + height
+    );
+
+    ctx.quadraticCurveTo(
+      x,
+      y + height,
+      x,
+      y + height - radius
+    );
+
+    ctx.lineTo(x, y + radius);
+
+    ctx.quadraticCurveTo(
+      x,
+      y,
+      x + radius,
+      y
+    );
+
+    ctx.closePath();
+
+    ctx.fillStyle = fillColor;
+    ctx.fill();
+  }
+
+  // Background
+  ctx.fillStyle = "#ecfdf5";
+
+  ctx.fillRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  // Success Circle
+  ctx.beginPath();
+
+  ctx.arc(
+    700,
+    130,
+    58,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fillStyle = "#16a34a";
+  ctx.fill();
+
+  // Check Mark
+  ctx.strokeStyle = "#ffffff";
+  ctx.lineWidth = 10;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  ctx.beginPath();
+
+  ctx.moveTo(670, 130);
+  ctx.lineTo(692, 152);
+  ctx.lineTo(732, 108);
+
+  ctx.stroke();
+
+  // Heading
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#08142f";
+  ctx.font = "700 48px Arial, sans-serif";
+
+  ctx.fillText(
+    "Consultation Booked Successfully",
+    700,
+    260
+  );
+
+  // Description
+  ctx.fillStyle = "#374151";
+  ctx.font = "28px Arial, sans-serif";
+
+  ctx.fillText(
+    "Your consultation with Laiba Hashmi has been booked successfully.",
+    700,
+    325
+  );
+
+  ctx.fillText(
+    "Please check your email for the Calendly confirmation and meeting details.",
+    700,
+    370
+  );
+
+  // Booking Details Card
+  drawRoundedRectangle(
+    130,
+    445,
+    1140,
+    385,
+    42,
+    "#ffffff"
+  );
+
+  ctx.textAlign = "left";
+
+  // Booking Details Label
+  ctx.fillStyle = "#ff5a12";
+  ctx.font = "700 22px Arial, sans-serif";
+
+  ctx.fillText(
+    "BOOKING DETAILS",
+    190,
+    515
+  );
+
+  // Consultation Title
+  ctx.fillStyle = "#08142f";
+  ctx.font = "700 34px Arial, sans-serif";
+
+  ctx.fillText(
+    selectedOption.title,
+    190,
+    590
+  );
+
+  // Date
+  ctx.fillStyle = "#374151";
+  ctx.font = "28px Arial, sans-serif";
+
+  ctx.fillText(
+    formatFullDate(
+      selectedSlot.startTime
+    ),
+    190,
+    655
+  );
+
+  // Time
+  ctx.fillText(
+    `${formatTime(
+      selectedSlot.startTime
+    )} PKT`,
+    190,
+    710
+  );
+
+  // Fee
+  ctx.fillStyle = "#ff5a12";
+  ctx.font = "700 38px Arial, sans-serif";
+
+  ctx.fillText(
+    selectedOption.price,
+    190,
+    780
+  );
+
+  // Footer
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#6b7280";
+  ctx.font = "22px Arial, sans-serif";
+
+  ctx.fillText(
+    "YouthAura Labs • Consultation Booking Confirmation",
+    700,
+    920
+  );
+
+  // Download PNG
+  const link = document.createElement("a");
+
+  link.download =
+    "YouthAura-Consultation-Booking-Receipt.png";
+
+  link.href =
+    canvas.toDataURL("image/png");
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  document.body.removeChild(link);
+}
 
   /*
    * SUCCESS PAGE

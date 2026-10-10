@@ -5,6 +5,7 @@ import {
   CalendarDays,
   Check,
   Clock3,
+  Download,
   FileUp,
   Loader2,
 } from "lucide-react";
@@ -103,8 +104,22 @@ export default function BookLaibaPage() {
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [discussion, setDiscussion] = useState("");
+
   const [paymentProof, setPaymentProof] =
     useState<File | null>(null);
+
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [bookingSuccess, setBookingSuccess] =
+    useState(false);
+
+  const canSubmit =
+    Boolean(selectedSlot) &&
+    fullName.trim().length > 0 &&
+    email.trim().length > 0 &&
+    whatsapp.trim().length > 0 &&
+    discussion.trim().length > 0 &&
+    paymentProof !== null;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -116,6 +131,8 @@ export default function BookLaibaPage() {
       setSelectedDate("");
       setSelectedSlot(null);
       setSlots([]);
+      setSubmitError("");
+      setBookingSuccess(false);
 
       const timeoutId = window.setTimeout(() => {
         controller.abort();
@@ -228,6 +245,385 @@ export default function BookLaibaPage() {
     (option) => option.duration === duration
   );
 
+  async function handleSubmit() {
+    if (!selectedSlot || !canSubmit) return;
+
+    try {
+      setSubmitting(true);
+      setSubmitError("");
+
+      const response = await fetch(
+        "/api/calendly/book",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            duration,
+            startTime: selectedSlot.startTime,
+            fullName: fullName.trim(),
+            email: email.trim(),
+            whatsapp: whatsapp.trim(),
+            discussion: discussion.trim(),
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(
+          data.error ||
+            "Unable to book consultation."
+        );
+      }
+
+      setBookingSuccess(true);
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error
+          ? err.message
+          : "Unable to book consultation."
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function downloadReceipt() {
+    if (!selectedSlot || !selectedOption) return;
+
+    const canvas = document.createElement("canvas");
+
+    canvas.width = 1400;
+    canvas.height = 1000;
+
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) return;
+
+    function drawRoundedRectangle(
+      x: number,
+      y: number,
+      width: number,
+      height: number,
+      radius: number,
+      fillColor: string
+    ) {
+      ctx.beginPath();
+
+      ctx.moveTo(x + radius, y);
+
+      ctx.lineTo(
+        x + width - radius,
+        y
+      );
+
+      ctx.quadraticCurveTo(
+        x + width,
+        y,
+        x + width,
+        y + radius
+      );
+
+      ctx.lineTo(
+        x + width,
+        y + height - radius
+      );
+
+      ctx.quadraticCurveTo(
+        x + width,
+        y + height,
+        x + width - radius,
+        y + height
+      );
+
+      ctx.lineTo(
+        x + radius,
+        y + height
+      );
+
+      ctx.quadraticCurveTo(
+        x,
+        y + height,
+        x,
+        y + height - radius
+      );
+
+      ctx.lineTo(
+        x,
+        y + radius
+      );
+
+      ctx.quadraticCurveTo(
+        x,
+        y,
+        x + radius,
+        y
+      );
+
+      ctx.closePath();
+
+      ctx.fillStyle = fillColor;
+      ctx.fill();
+    }
+
+    // Background
+    ctx.fillStyle = "#ecfdf5";
+    ctx.fillRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+    // Success circle
+    ctx.beginPath();
+    ctx.arc(
+      700,
+      130,
+      58,
+      0,
+      Math.PI * 2
+    );
+
+    ctx.fillStyle = "#16a34a";
+    ctx.fill();
+
+    // Check mark
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 10;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    ctx.beginPath();
+    ctx.moveTo(670, 130);
+    ctx.lineTo(692, 152);
+    ctx.lineTo(732, 108);
+    ctx.stroke();
+
+    // Main heading
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#08142f";
+    ctx.font =
+      "700 48px Arial, sans-serif";
+
+    ctx.fillText(
+      "Consultation Booked Successfully",
+      700,
+      260
+    );
+
+    // Description
+    ctx.fillStyle = "#374151";
+    ctx.font =
+      "28px Arial, sans-serif";
+
+    ctx.fillText(
+      "Your consultation with Laiba Hashmi has been booked successfully.",
+      700,
+      325
+    );
+
+    ctx.fillText(
+      "Please check your email for the Calendly confirmation and meeting details.",
+      700,
+      370
+    );
+
+    // Booking details card
+    drawRoundedRectangle(
+      130,
+      445,
+      1140,
+      385,
+      42,
+      "#ffffff"
+    );
+
+    ctx.textAlign = "left";
+
+    // Card heading
+    ctx.fillStyle = "#ff5a12";
+    ctx.font =
+      "700 22px Arial, sans-serif";
+
+    ctx.fillText(
+      "BOOKING DETAILS",
+      190,
+      515
+    );
+
+    // Consultation title
+    ctx.fillStyle = "#08142f";
+    ctx.font =
+      "700 34px Arial, sans-serif";
+
+    ctx.fillText(
+      selectedOption.title,
+      190,
+      590
+    );
+
+    // Date
+    ctx.fillStyle = "#374151";
+    ctx.font =
+      "28px Arial, sans-serif";
+
+    ctx.fillText(
+      formatFullDate(
+        selectedSlot.startTime
+      ),
+      190,
+      655
+    );
+
+    // Time
+    ctx.fillText(
+      `${formatTime(
+        selectedSlot.startTime
+      )} PKT`,
+      190,
+      710
+    );
+
+    // Fee
+    ctx.fillStyle = "#ff5a12";
+    ctx.font =
+      "700 38px Arial, sans-serif";
+
+    ctx.fillText(
+      selectedOption.price,
+      190,
+      780
+    );
+
+    // Footer text
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#6b7280";
+    ctx.font =
+      "22px Arial, sans-serif";
+
+    ctx.fillText(
+      "YouthAura Labs • Consultation Booking Confirmation",
+      700,
+      920
+    );
+
+    // Download PNG
+    const link =
+      document.createElement("a");
+
+    link.download =
+      "YouthAura-Consultation-Booking-Receipt.png";
+
+    link.href =
+      canvas.toDataURL("image/png");
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+  }
+
+  /*
+   * SUCCESS PAGE
+   * Once Calendly confirms the booking,
+   * the complete booking system disappears.
+   */
+  if (
+    bookingSuccess &&
+    selectedSlot &&
+    selectedOption
+  ) {
+    return (
+      <main className="min-h-screen bg-[#fffdf8] pb-24 pt-36">
+        <div className="site-shell">
+          <div className="mx-auto max-w-3xl">
+
+            <section className="rounded-[36px] border border-green-200 bg-green-50 px-6 py-10 text-center shadow-[0_20px_60px_rgba(8,20,47,.06)] md:px-12 md:py-14">
+
+              {/* Success Icon */}
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-600 text-white shadow-[0_12px_35px_rgba(22,163,74,.22)]">
+                <Check className="size-8" />
+              </div>
+
+              {/* Heading */}
+              <h1 className="mt-6 font-display text-3xl font-bold tracking-tight text-ink md:text-4xl">
+                Consultation Booked Successfully
+              </h1>
+
+              <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-ink/60 md:text-base">
+                Your consultation with Laiba Hashmi has been
+                booked successfully. Please check your email
+                for the Calendly confirmation and meeting
+                details.
+              </p>
+
+              {/* Booking Details */}
+              <div className="mx-auto mt-8 max-w-xl rounded-[28px] bg-white p-6 text-left shadow-sm md:p-8">
+
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
+                  Booking Details
+                </p>
+
+                <h2 className="mt-4 font-display text-xl font-bold text-ink">
+                  {selectedOption.title}
+                </h2>
+
+                <div className="mt-5 space-y-2">
+                  <p className="text-sm text-ink/60">
+                    {formatFullDate(
+                      selectedSlot.startTime
+                    )}
+                  </p>
+
+                  <p className="text-sm text-ink/60">
+                    {formatTime(
+                      selectedSlot.startTime
+                    )}{" "}
+                    PKT
+                  </p>
+                </div>
+
+                <p className="mt-5 text-2xl font-bold text-primary">
+                  {selectedOption.price}
+                </p>
+              </div>
+
+              {/* Download Receipt */}
+              <button
+                type="button"
+                onClick={downloadReceipt}
+                className="mx-auto mt-8 flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-7 text-sm font-bold text-white shadow-[0_12px_30px_rgba(255,90,18,.18)] transition hover:-translate-y-0.5 hover:opacity-90"
+              >
+                <Download className="size-4" />
+                Download Receipt
+              </button>
+
+              <p className="mx-auto mt-4 max-w-lg text-xs leading-5 text-ink/40">
+                This receipt confirms your consultation booking
+                with YouthAura Labs.
+              </p>
+
+            </section>
+
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  /*
+   * BOOKING PAGE
+   */
   return (
     <main className="min-h-screen bg-[#fffdf8] pb-24 pt-32">
       <div className="site-shell">
@@ -235,6 +631,7 @@ export default function BookLaibaPage() {
 
           {/* Hero */}
           <div className="mx-auto max-w-2xl text-center">
+
             <span className="inline-flex rounded-full bg-primary/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-primary">
               Consultation Booking
             </span>
@@ -247,11 +644,14 @@ export default function BookLaibaPage() {
               Choose your consultation duration, select an
               available date and request your preferred time.
             </p>
+
           </div>
 
           {/* Consultation Type */}
           <section className="mt-14">
+
             <div className="mb-6 flex items-center gap-3">
+
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
                 <Clock3 className="size-5" />
               </div>
@@ -265,52 +665,67 @@ export default function BookLaibaPage() {
                   Choose the session that fits your needs.
                 </p>
               </div>
+
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
-              {consultationOptions.map((option) => {
-                const active =
-                  duration === option.duration;
 
-                return (
-                  <button
-                    key={option.duration}
-                    type="button"
-                    onClick={() =>
-                      setDuration(option.duration)
-                    }
-                    className={`relative rounded-3xl border p-6 text-left transition-all duration-300 ${
-                      active
-                        ? "border-primary bg-primary/[0.04] shadow-[0_16px_45px_rgba(255,90,18,.10)]"
-                        : "border-black/10 bg-white hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg"
-                    }`}
-                  >
-                    {active && (
-                      <span className="absolute right-5 top-5 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-white">
-                        <Check className="size-4" />
-                      </span>
-                    )}
+              {consultationOptions.map(
+                (option) => {
+                  const active =
+                    duration === option.duration;
 
-                    <p className="font-display text-xl font-bold text-ink">
-                      {option.title}
-                    </p>
+                  return (
+                    <button
+                      key={option.duration}
+                      type="button"
+                      onClick={() => {
+                        setDuration(
+                          option.duration
+                        );
 
-                    <p className="mt-2 text-2xl font-bold text-primary">
-                      {option.price}
-                    </p>
+                        setBookingSuccess(false);
+                        setSubmitError("");
+                      }}
+                      className={`relative rounded-3xl border p-6 text-left transition-all duration-300 ${
+                        active
+                          ? "border-primary bg-primary/[0.04] shadow-[0_16px_45px_rgba(255,90,18,.10)]"
+                          : "border-black/10 bg-white hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg"
+                      }`}
+                    >
 
-                    <p className="mt-4 max-w-md text-sm leading-6 text-ink/55">
-                      {option.description}
-                    </p>
-                  </button>
-                );
-              })}
+                      {active && (
+                        <span className="absolute right-5 top-5 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-white">
+                          <Check className="size-4" />
+                        </span>
+                      )}
+
+                      <p className="font-display text-xl font-bold text-ink">
+                        {option.title}
+                      </p>
+
+                      <p className="mt-2 text-2xl font-bold text-primary">
+                        {option.price}
+                      </p>
+
+                      <p className="mt-4 max-w-md text-sm leading-6 text-ink/55">
+                        {option.description}
+                      </p>
+
+                    </button>
+                  );
+                }
+              )}
+
             </div>
+
           </section>
 
           {/* Calendly Availability */}
           <section className="mt-12 rounded-[32px] border border-black/10 bg-white p-5 shadow-[0_20px_60px_rgba(8,20,47,.06)] md:p-8">
+
             <div className="flex items-start gap-3">
+
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                 <CalendarDays className="size-5" />
               </div>
@@ -324,22 +739,30 @@ export default function BookLaibaPage() {
                   All times are shown in Pakistan Standard Time.
                 </p>
               </div>
+
             </div>
 
+            {/* Loading */}
             {loading && (
               <div className="flex min-h-[260px] items-center justify-center">
+
                 <div className="text-center">
+
                   <Loader2 className="mx-auto size-7 animate-spin text-primary" />
 
                   <p className="mt-3 text-sm text-ink/50">
                     Loading available times...
                   </p>
+
                 </div>
+
               </div>
             )}
 
+            {/* Availability Error */}
             {!loading && error && (
               <div className="mt-8 rounded-2xl border border-red-200 bg-red-50 p-6 text-center">
+
                 <p className="font-semibold text-red-700">
                   Unable to load available times
                 </p>
@@ -351,19 +774,24 @@ export default function BookLaibaPage() {
                 <button
                   type="button"
                   onClick={() =>
-                    setReloadKey((value) => value + 1)
+                    setReloadKey(
+                      (value) => value + 1
+                    )
                   }
                   className="mt-4 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white transition hover:opacity-90"
                 >
                   Try Again
                 </button>
+
               </div>
             )}
 
+            {/* No Availability */}
             {!loading &&
               !error &&
               availableDates.length === 0 && (
                 <div className="mt-8 rounded-2xl bg-secondary p-6 text-center">
+
                   <p className="font-semibold text-ink">
                     No available times found.
                   </p>
@@ -371,75 +799,100 @@ export default function BookLaibaPage() {
                   <p className="mt-1 text-sm text-ink/50">
                     Please try another consultation duration.
                   </p>
+
                 </div>
               )}
 
+            {/* Dates and Times */}
             {!loading &&
               !error &&
               availableDates.length > 0 && (
                 <>
                   {/* Dates */}
                   <div className="mt-8 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+
                     <div className="flex min-w-max gap-3">
-                      {availableDates.map((dateKey) => {
-                        const firstSlot =
-                          groupedSlots[dateKey][0];
 
-                        const active =
-                          selectedDate === dateKey;
+                      {availableDates.map(
+                        (dateKey) => {
+                          const firstSlot =
+                            groupedSlots[dateKey][0];
 
-                        return (
-                          <button
-                            key={dateKey}
-                            type="button"
-                            onClick={() => {
-                              setSelectedDate(dateKey);
-                              setSelectedSlot(null);
-                            }}
-                            className={`min-w-[125px] rounded-2xl border px-4 py-4 text-center transition ${
-                              active
-                                ? "border-primary bg-primary text-white shadow-lg"
-                                : "border-black/10 bg-[#fffdf8] text-ink hover:border-primary/40"
-                            }`}
-                          >
-                            <span
-                              className={`block text-sm font-bold ${
+                          const active =
+                            selectedDate ===
+                            dateKey;
+
+                          return (
+                            <button
+                              key={dateKey}
+                              type="button"
+                              onClick={() => {
+                                setSelectedDate(
+                                  dateKey
+                                );
+
+                                setSelectedSlot(
+                                  null
+                                );
+
+                                setBookingSuccess(
+                                  false
+                                );
+
+                                setSubmitError("");
+                              }}
+                              className={`min-w-[125px] rounded-2xl border px-4 py-4 text-center transition ${
                                 active
-                                  ? "text-white"
-                                  : "text-ink"
+                                  ? "border-primary bg-primary text-white shadow-lg"
+                                  : "border-black/10 bg-[#fffdf8] text-ink hover:border-primary/40"
                               }`}
                             >
-                              {formatDate(
-                                firstSlot.startTime
-                              )}
-                            </span>
 
-                            <span
-                              className={`mt-1 block text-xs ${
-                                active
-                                  ? "text-white/75"
-                                  : "text-ink/45"
-                              }`}
-                            >
-                              {
-                                groupedSlots[dateKey]
-                                  .length
-                              }{" "}
-                              times
-                            </span>
-                          </button>
-                        );
-                      })}
+                              <span
+                                className={`block text-sm font-bold ${
+                                  active
+                                    ? "text-white"
+                                    : "text-ink"
+                                }`}
+                              >
+                                {formatDate(
+                                  firstSlot.startTime
+                                )}
+                              </span>
+
+                              <span
+                                className={`mt-1 block text-xs ${
+                                  active
+                                    ? "text-white/75"
+                                    : "text-ink/45"
+                                }`}
+                              >
+                                {
+                                  groupedSlots[
+                                    dateKey
+                                  ].length
+                                }{" "}
+                                times
+                              </span>
+
+                            </button>
+                          );
+                        }
+                      )}
+
                     </div>
+
                   </div>
 
                   {/* Times */}
                   <div className="mt-8 border-t border-black/10 pt-7">
+
                     <p className="text-sm font-bold text-ink">
                       Available times
                     </p>
 
                     <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+
                       {selectedDateSlots.map(
                         (slot) => {
                           const active =
@@ -448,11 +901,21 @@ export default function BookLaibaPage() {
 
                           return (
                             <button
-                              key={slot.startTime}
-                              type="button"
-                              onClick={() =>
-                                setSelectedSlot(slot)
+                              key={
+                                slot.startTime
                               }
+                              type="button"
+                              onClick={() => {
+                                setSelectedSlot(
+                                  slot
+                                );
+
+                                setBookingSuccess(
+                                  false
+                                );
+
+                                setSubmitError("");
+                              }}
                               className={`rounded-xl border px-4 py-3 text-sm font-bold transition ${
                                 active
                                   ? "border-primary bg-primary text-white shadow-md"
@@ -466,17 +929,22 @@ export default function BookLaibaPage() {
                           );
                         }
                       )}
+
                     </div>
+
                   </div>
                 </>
               )}
+
           </section>
 
-          {/* Selected Consultation Summary */}
+          {/* Selected Consultation */}
           {selectedSlot && (
             <>
               <section className="mt-6 rounded-3xl bg-ink p-6 text-white md:flex md:items-center md:justify-between md:p-7">
+
                 <div>
+
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
                     Selected consultation
                   </p>
@@ -495,9 +963,11 @@ export default function BookLaibaPage() {
                     )}{" "}
                     PKT
                   </p>
+
                 </div>
 
                 <div className="mt-5 md:mt-0 md:text-right">
+
                   <p className="text-sm text-white/45">
                     Consultation fee
                   </p>
@@ -505,12 +975,16 @@ export default function BookLaibaPage() {
                   <p className="mt-1 text-2xl font-bold text-primary">
                     {selectedOption?.price}
                   </p>
+
                 </div>
+
               </section>
 
               {/* Personal Details */}
               <section className="mt-8 rounded-[32px] border border-black/10 bg-white p-6 shadow-[0_20px_60px_rgba(8,20,47,.06)] md:p-8">
+
                 <div>
+
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
                     Your Details
                   </p>
@@ -521,15 +995,17 @@ export default function BookLaibaPage() {
 
                   <p className="mt-2 max-w-2xl text-sm leading-6 text-ink/50">
                     Enter your contact details and briefly tell
-                    us what you would like to discuss during the
-                    consultation.
+                    us what you would like to discuss during
+                    the consultation.
                   </p>
+
                 </div>
 
                 <div className="mt-8 grid gap-5 md:grid-cols-2">
 
-                  {/* Name */}
+                  {/* Full Name */}
                   <div>
+
                     <label
                       htmlFor="fullName"
                       className="mb-2 block text-sm font-bold text-ink"
@@ -542,15 +1018,19 @@ export default function BookLaibaPage() {
                       type="text"
                       value={fullName}
                       onChange={(e) =>
-                        setFullName(e.target.value)
+                        setFullName(
+                          e.target.value
+                        )
                       }
                       placeholder="Enter your full name"
                       className="w-full rounded-2xl border border-black/10 bg-[#fffdf8] px-4 py-3.5 text-sm text-ink outline-none transition placeholder:text-ink/30 focus:border-primary"
                     />
+
                   </div>
 
                   {/* Email */}
                   <div>
+
                     <label
                       htmlFor="email"
                       className="mb-2 block text-sm font-bold text-ink"
@@ -563,15 +1043,19 @@ export default function BookLaibaPage() {
                       type="email"
                       value={email}
                       onChange={(e) =>
-                        setEmail(e.target.value)
+                        setEmail(
+                          e.target.value
+                        )
                       }
                       placeholder="you@example.com"
                       className="w-full rounded-2xl border border-black/10 bg-[#fffdf8] px-4 py-3.5 text-sm text-ink outline-none transition placeholder:text-ink/30 focus:border-primary"
                     />
+
                   </div>
 
                   {/* WhatsApp */}
                   <div className="md:col-span-2">
+
                     <label
                       htmlFor="whatsapp"
                       className="mb-2 block text-sm font-bold text-ink"
@@ -584,15 +1068,19 @@ export default function BookLaibaPage() {
                       type="tel"
                       value={whatsapp}
                       onChange={(e) =>
-                        setWhatsapp(e.target.value)
+                        setWhatsapp(
+                          e.target.value
+                        )
                       }
                       placeholder="Enter your WhatsApp number"
                       className="w-full rounded-2xl border border-black/10 bg-[#fffdf8] px-4 py-3.5 text-sm text-ink outline-none transition placeholder:text-ink/30 focus:border-primary"
                     />
+
                   </div>
 
                   {/* Discussion */}
                   <div className="md:col-span-2">
+
                     <label
                       htmlFor="discussion"
                       className="mb-2 block text-sm font-bold text-ink"
@@ -605,16 +1093,21 @@ export default function BookLaibaPage() {
                       rows={5}
                       value={discussion}
                       onChange={(e) =>
-                        setDiscussion(e.target.value)
+                        setDiscussion(
+                          e.target.value
+                        )
                       }
                       placeholder="Briefly describe what you would like guidance on..."
                       className="w-full resize-none rounded-2xl border border-black/10 bg-[#fffdf8] px-4 py-3.5 text-sm leading-6 text-ink outline-none transition placeholder:text-ink/30 focus:border-primary"
                     />
+
                   </div>
+
                 </div>
 
                 {/* Payment */}
                 <div className="mt-10 border-t border-black/10 pt-8">
+
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
                     Payment
                   </p>
@@ -624,7 +1117,9 @@ export default function BookLaibaPage() {
                   </h3>
 
                   <div className="mt-5 rounded-2xl border border-primary/20 bg-primary/[0.04] p-5 md:flex md:items-center md:justify-between">
+
                     <div>
+
                       <p className="text-sm font-semibold text-ink">
                         Consultation Fee
                       </p>
@@ -632,18 +1127,23 @@ export default function BookLaibaPage() {
                       <p className="mt-1 text-2xl font-bold text-primary">
                         {selectedOption?.price}
                       </p>
+
                     </div>
 
                     <div className="mt-4 max-w-md md:mt-0 md:text-right">
+
                       <p className="text-sm leading-6 text-ink/55">
                         Official bank account details will be
                         added here once they are provided.
                       </p>
+
                     </div>
+
                   </div>
 
                   {/* Payment Proof */}
                   <div className="mt-7">
+
                     <label className="mb-2 block text-sm font-bold text-ink">
                       Upload Payment Proof
                     </label>
@@ -652,6 +1152,7 @@ export default function BookLaibaPage() {
                       htmlFor="paymentProof"
                       className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-black/10 bg-[#fffdf8] px-6 py-9 text-center transition hover:border-primary/50 hover:bg-primary/[0.02]"
                     >
+
                       <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                         <FileUp className="size-5" />
                       </div>
@@ -665,6 +1166,7 @@ export default function BookLaibaPage() {
                       <span className="mt-2 text-xs text-ink/45">
                         Image or PDF
                       </span>
+
                     </label>
 
                     <input
@@ -673,22 +1175,28 @@ export default function BookLaibaPage() {
                       accept="image/*,.pdf"
                       onChange={(e) =>
                         setPaymentProof(
-                          e.target.files?.[0] ?? null
+                          e.target.files?.[0] ??
+                            null
                         )
                       }
                       className="hidden"
                     />
+
                   </div>
+
                 </div>
 
-                {/* Final Review */}
+                {/* Request Summary */}
                 <div className="mt-8 rounded-3xl bg-ink p-6 text-white">
+
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
                     Request Summary
                   </p>
 
                   <div className="mt-4 grid gap-5 md:grid-cols-3">
+
                     <div>
+
                       <p className="text-xs text-white/40">
                         Consultation
                       </p>
@@ -696,9 +1204,11 @@ export default function BookLaibaPage() {
                       <p className="mt-1 text-sm font-bold">
                         {selectedOption?.title}
                       </p>
+
                     </div>
 
                     <div>
+
                       <p className="text-xs text-white/40">
                         Date & Time
                       </p>
@@ -715,9 +1225,11 @@ export default function BookLaibaPage() {
                         )}{" "}
                         PKT
                       </p>
+
                     </div>
 
                     <div className="md:text-right">
+
                       <p className="text-xs text-white/40">
                         Fee
                       </p>
@@ -725,27 +1237,56 @@ export default function BookLaibaPage() {
                       <p className="mt-1 text-xl font-bold text-primary">
                         {selectedOption?.price}
                       </p>
+
                     </div>
+
                   </div>
+
                 </div>
 
                 {/* Submit */}
                 <button
                   type="button"
-                  disabled
-                  className="mt-6 flex min-h-12 w-full cursor-not-allowed items-center justify-center rounded-full bg-primary px-6 text-sm font-bold text-white opacity-50"
+                  onClick={handleSubmit}
+                  disabled={
+                    !canSubmit ||
+                    submitting
+                  }
+                  className={`mt-6 flex min-h-12 w-full items-center justify-center rounded-full px-6 text-sm font-bold text-white transition ${
+                    canSubmit &&
+                    !submitting
+                      ? "cursor-pointer bg-primary hover:opacity-90"
+                      : "cursor-not-allowed bg-primary opacity-50"
+                  }`}
                 >
-                  Submit Consultation Request
+
+                  {submitting ? (
+                    <>
+                      <Loader2 className="mr-2 size-4 animate-spin" />
+                      Booking Consultation...
+                    </>
+                  ) : (
+                    "Submit Consultation Request"
+                  )}
+
                 </button>
 
+                {/* Submit Error */}
+                {submitError && (
+                  <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-center text-sm text-red-700">
+                    {submitError}
+                  </div>
+                )}
+
                 <p className="mx-auto mt-3 max-w-2xl text-center text-xs leading-5 text-ink/45">
-                  Submitting a request will not automatically
-                  confirm the appointment. Payment will first be
-                  reviewed by the YouthAura Labs team.
+                  Your selected appointment will be booked
+                  immediately after successful submission.
                 </p>
+
               </section>
             </>
           )}
+
         </div>
       </div>
     </main>

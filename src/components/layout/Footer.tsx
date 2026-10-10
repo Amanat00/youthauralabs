@@ -15,16 +15,16 @@ export default function Footer() {
         <div className="grid gap-12 border-b border-white/10 pb-14 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
             <Link href="/" className="inline-flex items-center">
-  <span className="flex h-[74px] w-[170px] items-center justify-center overflow-hidden rounded-2xl bg-white px-3">
-    <Image
-      src="/logo.png"
-      alt="YouthAura Labs"
-      width={280}
-      height={130}
-      className="h-[82px] w-auto max-w-none scale-[1.25] object-contain"
-    />
-  </span>
-</Link>
+              <span className="flex h-[82px] w-[190px] items-center justify-center rounded-2xl bg-white px-4">
+                <Image
+                  src="/YouthAuralogo.png"
+                  alt="YouthAura Labs"
+                  width={360}
+                  height={180}
+                  className="h-[68px] w-auto object-contain"
+                />
+              </span>
+            </Link>
             <p className="mt-5 max-w-md text-sm leading-7 text-white/55">A career-readiness academy helping university students and early-career talent turn potential into practical skills, proof of work and confidence.</p>
             <Link href="/apply" className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-primary">Apply for the next cohort <ArrowUpRight className="size-4" /></Link>
           </div>

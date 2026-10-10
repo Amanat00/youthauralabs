@@ -68,8 +68,7 @@ export default function HomePage() {
   return (
     <div>
       {/* HERO */}
-      <section className="relative overflow-hidden pb-20 pt-32 md:pb-24 md:pt-36">
-        <div className="absolute -left-40 top-24 h-80 w-80 rounded-full bg-primary/10 blur-[100px]" />
+<section className="relative overflow-hidden pb-28 pt-32 md:pb-36 md:pt-36">        <div className="absolute -left-40 top-24 h-80 w-80 rounded-full bg-primary/10 blur-[100px]" />
         <div className="absolute -right-40 top-10 h-96 w-96 rounded-full bg-royal/10 blur-[110px]" />
 
         <div className="site-shell relative grid items-center gap-14 lg:grid-cols-[1.05fr_.95fr]">
@@ -157,7 +156,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="absolute -bottom-5 right-3 z-20 grid grid-cols-2 gap-6 rounded-2xl bg-white px-6 py-5 shadow-[0_20px_55px_rgba(8,20,47,.14)] sm:right-[-18px]">
+            <div className="absolute -bottom-16 right-3 z-20 grid grid-cols-2 gap-6 rounded-2xl bg-white px-6 py-5 shadow-[0_20px_55px_rgba(8,20,47,.14)] sm:right-[-18px]">
               <div>
                 <p className="font-display text-3xl font-bold text-ink">
                   12

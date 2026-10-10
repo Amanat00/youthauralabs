@@ -35,18 +35,17 @@ export default function Navbar() {
         <nav className={`flex items-center justify-between rounded-2xl border px-3 py-2 transition-all ${scrolled ? "border-black/10 bg-[#fffdf8]/95 shadow-[0_12px_40px_rgba(8,20,47,.08)] backdrop-blur-xl" : "border-white/60 bg-white/80 backdrop-blur-xl"}`}>
           <Link
   href="/"
-  className="flex h-[64px] w-[175px] items-center overflow-hidden"
+  className="flex h-[75px] w-[165px] shrink-0 items-center"
 >
   <Image
-    src="/logo.png"
+    src="/YouthAuralogo.png"
     alt="YouthAura Labs"
-    width={280}
-    height={130}
+    width={360}
+    height={180}
     priority
-    className="h-[82px] w-auto max-w-none origin-left scale-[1.45] object-contain"
+    className="h-[62px] w-auto object-contain object-left"
   />
 </Link>
-
           <div className="hidden items-center gap-1 lg:flex">
             {links.map((link) => {
               const active = pathname === link.href;

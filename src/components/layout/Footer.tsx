@@ -17,7 +17,7 @@ export default function Footer() {
             <Link href="/" className="inline-flex items-center">
               <span className="flex h-[82px] w-[190px] items-center justify-center rounded-2xl bg-white px-4">
                 <Image
-                  src="/YouthAuralogo.png"
+                  src="/youthauralogo.png"
                   alt="YouthAura Labs"
                   width={360}
                   height={180}

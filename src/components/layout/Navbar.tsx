@@ -38,7 +38,7 @@ export default function Navbar() {
   className="flex h-[75px] w-[165px] shrink-0 items-center"
 >
   <Image
-    src="/YouthAuralogo.png"
+    src="/youthauralogo.png"
     alt="YouthAura Labs"
     width={360}
     height={180}

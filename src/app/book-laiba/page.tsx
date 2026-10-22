@@ -1005,7 +1005,7 @@ export default function BookLaibaPage() {
                       htmlFor="fullName"
                       className="mb-2 block text-sm font-bold text-ink"
                     >
-                      Full Name
+                      Full Name <span className="text-primary">*</span>
                     </label>
 
                     <input
@@ -1030,7 +1030,7 @@ export default function BookLaibaPage() {
                       htmlFor="email"
                       className="mb-2 block text-sm font-bold text-ink"
                     >
-                      Email Address
+                      Email Address <span className="text-primary">*</span>
                     </label>
 
                     <input
@@ -1055,7 +1055,7 @@ export default function BookLaibaPage() {
                       htmlFor="whatsapp"
                       className="mb-2 block text-sm font-bold text-ink"
                     >
-                      WhatsApp Number
+                      WhatsApp Number <span className="text-primary">*</span>
                     </label>
 
                     <input
@@ -1080,7 +1080,7 @@ export default function BookLaibaPage() {
                       htmlFor="discussion"
                       className="mb-2 block text-sm font-bold text-ink"
                     >
-                      What would you like to discuss?
+                      What would you like to discuss? <span className="text-primary">*</span>
                     </label>
 
                     <textarea
@@ -1140,7 +1140,7 @@ export default function BookLaibaPage() {
                   <div className="mt-7">
 
                     <label className="mb-2 block text-sm font-bold text-ink">
-                      Upload Payment Proof
+                      Upload Payment Proof <span className="text-primary">*</span>
                     </label>
 
                     <label

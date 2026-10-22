@@ -1127,10 +1127,37 @@ export default function BookLaibaPage() {
 
                     <div className="mt-4 max-w-md md:mt-0 md:text-right">
 
-                      <p className="text-sm leading-6 text-ink/55">
-                        Official bank account details will be
-                        added here once they are provided.
-                      </p>
+                      <div className="mt-4 space-y-2 rounded-2xl border border-black/10 bg-white p-4 text-left md:mt-0 md:min-w-[280px]">
+  <div className="flex items-center justify-between gap-4">
+    <span className="text-sm text-ink/50">
+      Bank
+    </span>
+
+    <span className="text-sm font-bold text-ink">
+      Meezan Bank
+    </span>
+  </div>
+
+  <div className="flex items-center justify-between gap-4">
+    <span className="text-sm text-ink/50">
+      Account Title
+    </span>
+
+    <span className="text-sm font-bold text-ink">
+      Laiba Hashmi
+    </span>
+  </div>
+
+  <div className="flex items-center justify-between gap-4">
+    <span className="text-sm text-ink/50">
+      Account Number
+    </span>
+
+    <span className="text-sm font-bold text-ink">
+      29010108805092
+    </span>
+  </div>
+</div>
 
                     </div>
 

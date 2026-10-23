@@ -10,7 +10,7 @@ import {
   Loader2,
 } from "lucide-react";
 
-type Duration = 30 | 60;
+type Duration = 30;
 
 type CalendlySlot = {
   startTime: string;
@@ -28,20 +28,75 @@ type AvailabilityResponse = {
 
 const TIME_ZONE = "Asia/Karachi";
 
+function fileToBase64(
+  file: File
+): Promise<string> {
+  return new Promise(
+    (resolve, reject) => {
+      const reader =
+        new FileReader();
+
+      reader.onload = () => {
+        const result =
+          reader.result;
+
+        if (
+          typeof result !==
+          "string"
+        ) {
+          reject(
+            new Error(
+              "Unable to read payment proof."
+            )
+          );
+
+          return;
+        }
+
+        const commaIndex =
+          result.indexOf(",");
+
+        if (
+          commaIndex === -1
+        ) {
+          reject(
+            new Error(
+              "Invalid payment proof."
+            )
+          );
+
+          return;
+        }
+
+        resolve(
+          result.slice(
+            commaIndex + 1
+          )
+        );
+      };
+
+      reader.onerror = () => {
+        reject(
+          new Error(
+            "Unable to read payment proof."
+          )
+        );
+      };
+
+      reader.readAsDataURL(
+        file
+      );
+    }
+  );
+}
+
 const consultationOptions = [
   {
     duration: 30 as Duration,
     title: "30 Minute Consultation",
     price: "PKR 5,000",
     description:
-      "Ideal for focused guidance, quick strategy discussions and specific questions.",
-  },
-  {
-    duration: 60 as Duration,
-    title: "60 Minute Consultation",
-    price: "PKR 10,000",
-    description:
-      "Best for detailed discussion, planning and more in-depth guidance.",
+      "A focused 30-minute consultation with Laiba Hashmi for guidance, strategy discussions and specific questions.",
   },
 ];
 
@@ -89,8 +144,7 @@ function formatTime(iso: string) {
 }
 
 export default function BookLaibaPage() {
-  const [duration, setDuration] = useState<Duration>(30);
-
+const [duration] = useState<Duration>(30);
   const [slots, setSlots] = useState<CalendlySlot[]>([]);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedSlot, setSelectedSlot] =
@@ -140,7 +194,7 @@ export default function BookLaibaPage() {
 
       try {
         const response = await fetch(
-          `/api/calendly/availability?duration=${duration}`,
+"/api/calendly/availability?duration=30",
           {
             method: "GET",
             cache: "no-store",
@@ -217,7 +271,7 @@ export default function BookLaibaPage() {
       active = false;
       controller.abort();
     };
-  }, [duration, reloadKey]);
+  }, [reloadKey]);
 
   const groupedSlots = useMemo(() => {
     const groups: Record<string, CalendlySlot[]> = {};
@@ -246,55 +300,138 @@ export default function BookLaibaPage() {
   );
 
   async function handleSubmit() {
-    if (!selectedSlot || !canSubmit) return;
+  if (
+    !selectedSlot ||
+    !canSubmit ||
+    !paymentProof
+  ) {
+    return;
+  }
 
-    try {
-      setSubmitting(true);
-      setSubmitError("");
+  try {
+    setSubmitting(true);
+    setSubmitError("");
 
-      const response = await fetch(
-        "/api/calendly/book",
+    const allowedTypes = [
+      "application/pdf",
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+    ];
+
+    if (
+      !allowedTypes.includes(
+        paymentProof.type
+      )
+    ) {
+      throw new Error(
+        "Payment proof must be a PDF, JPG, PNG or WEBP file."
+      );
+    }
+
+    if (
+      paymentProof.size >
+      3 * 1024 * 1024
+    ) {
+      throw new Error(
+        "Payment proof must be 3 MB or smaller."
+      );
+    }
+
+    const paymentProofBase64 =
+      await fileToBase64(
+        paymentProof
+      );
+
+    const response =
+      await fetch(
+        "/api/submissions/consultation",
         {
           method: "POST",
+
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type":
+              "application/json",
           },
+
           body: JSON.stringify({
-            duration,
-            startTime: selectedSlot.startTime,
-            fullName: fullName.trim(),
-            email: email.trim(),
-            whatsapp: whatsapp.trim(),
-            discussion: discussion.trim(),
+            fullName:
+              fullName.trim(),
+
+            email:
+              email.trim(),
+
+            whatsapp:
+              whatsapp.trim(),
+
+            discussion:
+              discussion.trim(),
+
+            startTime:
+              selectedSlot.startTime,
+
+            paymentProof: {
+              name:
+                paymentProof.name,
+
+              mimeType:
+                paymentProof.type,
+
+              base64:
+                paymentProofBase64,
+            },
           }),
         }
       );
 
-      const data = await response.json();
+    const responseText =
+      await response.text();
 
-      if (!response.ok || !data.success) {
-        throw new Error(
-          data.error ||
-            "Unable to book consultation."
+    let data: {
+      success?: boolean;
+      id?: string;
+      status?: string;
+      error?: string;
+    };
+
+    try {
+      data =
+        JSON.parse(
+          responseText
         );
-      }
-
-      setBookingSuccess(true);
-
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    } catch (err) {
-      setSubmitError(
-        err instanceof Error
-          ? err.message
-          : "Unable to book consultation."
+    } catch {
+      throw new Error(
+        responseText ||
+          "Server returned an invalid response."
       );
-    } finally {
-      setSubmitting(false);
     }
+
+    if (
+      !response.ok ||
+      !data.success
+    ) {
+      throw new Error(
+        data.error ||
+          "Unable to submit consultation request."
+      );
+    }
+
+    setBookingSuccess(true);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  } catch (error) {
+    setSubmitError(
+      error instanceof Error
+        ? error.message
+        : "Unable to submit consultation request."
+    );
+  } finally {
+    setSubmitting(false);
   }
+}
 
   function downloadReceipt() {
   if (!selectedSlot || !selectedOption) return;
@@ -636,8 +773,8 @@ export default function BookLaibaPage() {
             </h1>
 
             <p className="mt-5 text-base leading-7 text-ink/60 md:text-lg">
-              Choose your consultation duration, select an
-              available date and request your preferred time.
+              Select an available date and time for your
+30-minute consultation with Laiba Hashmi.
             </p>
 
           </div>
@@ -653,18 +790,17 @@ export default function BookLaibaPage() {
 
               <div>
                 <p className="font-display text-xl font-bold text-ink">
-                  Select consultation
-                </p>
+  30 Minute Consultation
+</p>
 
-                <p className="text-sm text-ink/50">
-                  Choose the session that fits your needs.
-                </p>
+<p className="text-sm text-ink/50">
+  Review the consultation details and choose your preferred date and time.
+</p>
               </div>
 
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-
+<div className="grid gap-4">
               {consultationOptions.map(
                 (option) => {
                   const active =
@@ -675,10 +811,6 @@ export default function BookLaibaPage() {
                       key={option.duration}
                       type="button"
                       onClick={() => {
-                        setDuration(
-                          option.duration
-                        );
-
                         setBookingSuccess(false);
                         setSubmitError("");
                       }}
@@ -1194,7 +1326,7 @@ export default function BookLaibaPage() {
                     <input
                       id="paymentProof"
                       type="file"
-                      accept="image/*,.pdf"
+                      accept=".pdf,.jpg,.jpeg,.png,.webp"
                       onChange={(e) =>
                         setPaymentProof(
                           e.target.files?.[0] ??
@@ -1285,7 +1417,7 @@ export default function BookLaibaPage() {
                   {submitting ? (
                     <>
                       <Loader2 className="mr-2 size-4 animate-spin" />
-                      Booking Consultation...
+                      Submitting Request...
                     </>
                   ) : (
                     "Submit Consultation Request"
@@ -1301,9 +1433,9 @@ export default function BookLaibaPage() {
                 )}
 
                 <p className="mx-auto mt-3 max-w-2xl text-center text-xs leading-5 text-ink/45">
-                  Your selected appointment will be booked
-                  immediately after successful submission.
-                </p>
+  Your consultation request will be submitted for payment
+  verification. The appointment will only be scheduled after approval.
+</p>
 
               </section>
             </>

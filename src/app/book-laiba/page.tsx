@@ -28,73 +28,11 @@ type AvailabilityResponse = {
 
 const TIME_ZONE = "Asia/Karachi";
 
-function fileToBase64(
-  file: File
-): Promise<string> {
-  return new Promise(
-    (resolve, reject) => {
-      const reader =
-        new FileReader();
-
-      reader.onload = () => {
-        const result =
-          reader.result;
-
-        if (
-          typeof result !==
-          "string"
-        ) {
-          reject(
-            new Error(
-              "Unable to read payment proof."
-            )
-          );
-
-          return;
-        }
-
-        const commaIndex =
-          result.indexOf(",");
-
-        if (
-          commaIndex === -1
-        ) {
-          reject(
-            new Error(
-              "Invalid payment proof."
-            )
-          );
-
-          return;
-        }
-
-        resolve(
-          result.slice(
-            commaIndex + 1
-          )
-        );
-      };
-
-      reader.onerror = () => {
-        reject(
-          new Error(
-            "Unable to read payment proof."
-          )
-        );
-      };
-
-      reader.readAsDataURL(
-        file
-      );
-    }
-  );
-}
-
 const consultationOptions = [
   {
     duration: 30 as Duration,
     title: "30 Minute Consultation",
-    price: "PKR 5,000",
+    price: "PKR 10,000",
     description:
       "A focused 30-minute consultation with Laiba Hashmi for guidance, strategy discussions and specific questions.",
   },
@@ -143,6 +81,52 @@ function formatTime(iso: string) {
   }).format(new Date(iso));
 }
 
+
+function fileToBase64Payload(file: File) {
+  return new Promise<{
+    name: string;
+    mimeType: string;
+    base64: string;
+  }>((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const result = String(reader.result || "");
+      const commaIndex = result.indexOf(",");
+
+      if (commaIndex === -1) {
+        reject(
+          new Error(
+            "Unable to read payment proof."
+          )
+        );
+        return;
+      }
+
+      resolve({
+        name: file.name,
+        mimeType:
+          file.type ||
+          "application/octet-stream",
+        base64:
+          result.slice(
+            commaIndex + 1
+          ),
+      });
+    };
+
+    reader.onerror = () => {
+      reject(
+        new Error(
+          "Unable to read payment proof."
+        )
+      );
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function BookLaibaPage() {
 const [duration] = useState<Duration>(30);
   const [slots, setSlots] = useState<CalendlySlot[]>([]);
@@ -164,7 +148,7 @@ const [duration] = useState<Duration>(30);
 
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
-  const [bookingSuccess, setBookingSuccess] =
+  const [requestSubmitted, setRequestSubmitted] =
     useState(false);
 
   const canSubmit =
@@ -186,7 +170,7 @@ const [duration] = useState<Duration>(30);
       setSelectedSlot(null);
       setSlots([]);
       setSubmitError("");
-      setBookingSuccess(false);
+      setRequestSubmitted(false);
 
       const timeoutId = window.setTimeout(() => {
         controller.abort();
@@ -300,138 +284,80 @@ const [duration] = useState<Duration>(30);
   );
 
   async function handleSubmit() {
-  if (
-    !selectedSlot ||
-    !canSubmit ||
-    !paymentProof
-  ) {
-    return;
-  }
-
-  try {
-    setSubmitting(true);
-    setSubmitError("");
-
-    const allowedTypes = [
-      "application/pdf",
-      "image/jpeg",
-      "image/png",
-      "image/webp",
-    ];
-
     if (
-      !allowedTypes.includes(
-        paymentProof.type
-      )
+      !selectedSlot ||
+      !canSubmit ||
+      !paymentProof
     ) {
-      throw new Error(
-        "Payment proof must be a PDF, JPG, PNG or WEBP file."
-      );
+      return;
     }
 
-    if (
-      paymentProof.size >
-      3 * 1024 * 1024
-    ) {
-      throw new Error(
-        "Payment proof must be 3 MB or smaller."
-      );
-    }
+    try {
+      setSubmitting(true);
+      setSubmitError("");
 
-    const paymentProofBase64 =
-      await fileToBase64(
-        paymentProof
-      );
+      const paymentProofPayload =
+        await fileToBase64Payload(
+          paymentProof
+        );
 
-    const response =
-      await fetch(
+      const response = await fetch(
         "/api/submissions/consultation",
         {
           method: "POST",
-
           headers: {
             "Content-Type":
               "application/json",
           },
-
           body: JSON.stringify({
             fullName:
               fullName.trim(),
-
             email:
               email.trim(),
-
             whatsapp:
               whatsapp.trim(),
-
             discussion:
               discussion.trim(),
-
             startTime:
               selectedSlot.startTime,
-
-            paymentProof: {
-              name:
-                paymentProof.name,
-
-              mimeType:
-                paymentProof.type,
-
-              base64:
-                paymentProofBase64,
-            },
+            paymentProof:
+              paymentProofPayload,
           }),
         }
       );
 
-    const responseText =
-      await response.text();
+      const data =
+        await response
+          .json()
+          .catch(() => null);
 
-    let data: {
-      success?: boolean;
-      id?: string;
-      status?: string;
-      error?: string;
-    };
-
-    try {
-      data =
-        JSON.parse(
-          responseText
+      if (
+        !response.ok ||
+        !data?.success
+      ) {
+        throw new Error(
+          data?.error ||
+            "Unable to submit consultation request."
         );
-    } catch {
-      throw new Error(
-        responseText ||
-          "Server returned an invalid response."
+      }
+
+      setRequestSubmitted(true);
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error
+          ? err.message
+          : "Unable to submit consultation request."
       );
+    } finally {
+      setSubmitting(false);
     }
-
-    if (
-      !response.ok ||
-      !data.success
-    ) {
-      throw new Error(
-        data.error ||
-          "Unable to submit consultation request."
-      );
-    }
-
-    setBookingSuccess(true);
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  } catch (error) {
-    setSubmitError(
-      error instanceof Error
-        ? error.message
-        : "Unable to submit consultation request."
-    );
-  } finally {
-    setSubmitting(false);
   }
-}
+
 
   function downloadReceipt() {
   if (!selectedSlot || !selectedOption) return;
@@ -439,7 +365,7 @@ const [duration] = useState<Duration>(30);
   const canvas = document.createElement("canvas");
 
   canvas.width = 1400;
-  canvas.height = 1000;
+  canvas.height = 1160;
 
   const context = canvas.getContext("2d");
 
@@ -511,7 +437,7 @@ const [duration] = useState<Duration>(30);
   }
 
   // Background
-  ctx.fillStyle = "#ecfdf5";
+  ctx.fillStyle = "#fff8f1";
 
   ctx.fillRect(
     0,
@@ -531,7 +457,7 @@ const [duration] = useState<Duration>(30);
     Math.PI * 2
   );
 
-  ctx.fillStyle = "#16a34a";
+  ctx.fillStyle = "#ff5a12";
   ctx.fill();
 
   // Check Mark
@@ -554,7 +480,7 @@ const [duration] = useState<Duration>(30);
   ctx.font = "700 48px Arial, sans-serif";
 
   ctx.fillText(
-    "Consultation Booked Successfully",
+    "Consultation Request Received",
     700,
     260
   );
@@ -564,35 +490,35 @@ const [duration] = useState<Duration>(30);
   ctx.font = "28px Arial, sans-serif";
 
   ctx.fillText(
-    "Your consultation with Laiba Hashmi has been booked successfully.",
+    "Your request has been received and is pending payment verification.",
     700,
     325
   );
 
   ctx.fillText(
-    "Please check your email for the Calendly confirmation and meeting details.",
+    "After review, YouthAura Labs will confirm and schedule the consultation.",
     700,
     370
   );
 
-  // Booking Details Card
+  // Request Details Card
   drawRoundedRectangle(
     130,
     445,
     1140,
-    385,
+    520,
     42,
     "#ffffff"
   );
 
   ctx.textAlign = "left";
 
-  // Booking Details Label
+  // Request Details Label
   ctx.fillStyle = "#ff5a12";
   ctx.font = "700 22px Arial, sans-serif";
 
   ctx.fillText(
-    "BOOKING DETAILS",
+    "REQUEST DETAILS",
     190,
     515
   );
@@ -607,25 +533,38 @@ const [duration] = useState<Duration>(30);
     590
   );
 
-  // Date
+  // Applicant
   ctx.fillStyle = "#374151";
-  ctx.font = "28px Arial, sans-serif";
+  ctx.font = "26px Arial, sans-serif";
 
   ctx.fillText(
-    formatFullDate(
-      selectedSlot.startTime
-    ),
+    `Name: ${fullName.trim()}`,
     190,
-    655
+    650
+  );
+
+  ctx.fillText(
+    `Email: ${email.trim()}`,
+    190,
+    700
+  );
+
+  // Date
+  ctx.fillText(
+    `Requested date: ${formatFullDate(
+      selectedSlot.startTime
+    )}`,
+    190,
+    755
   );
 
   // Time
   ctx.fillText(
-    `${formatTime(
+    `Requested time: ${formatTime(
       selectedSlot.startTime
     )} PKT`,
     190,
-    710
+    810
   );
 
   // Fee
@@ -635,7 +574,7 @@ const [duration] = useState<Duration>(30);
   ctx.fillText(
     selectedOption.price,
     190,
-    780
+    885
   );
 
   // Footer
@@ -644,16 +583,16 @@ const [duration] = useState<Duration>(30);
   ctx.font = "22px Arial, sans-serif";
 
   ctx.fillText(
-    "YouthAura Labs • Consultation Booking Confirmation",
+    "YouthAura Labs • Consultation Request — Pending Review",
     700,
-    920
+    1050
   );
 
   // Download PNG
   const link = document.createElement("a");
 
   link.download =
-    "YouthAura-Consultation-Booking-Receipt.png";
+    "YouthAura-Consultation-Request-Receipt.png";
 
   link.href =
     canvas.toDataURL("image/png");
@@ -666,12 +605,12 @@ const [duration] = useState<Duration>(30);
 }
 
   /*
-   * SUCCESS PAGE
-   * Once Calendly confirms the booking,
-   * the complete booking system disappears.
+   * REQUEST RECEIVED PAGE
+   * This is not a confirmed booking.
+   * Payment proof must be reviewed first.
    */
   if (
-    bookingSuccess &&
+    requestSubmitted &&
     selectedSlot &&
     selectedOption
   ) {
@@ -679,74 +618,110 @@ const [duration] = useState<Duration>(30);
       <main className="min-h-screen bg-[#fffdf8] pb-24 pt-36">
         <div className="site-shell">
           <div className="mx-auto max-w-3xl">
+            <section className="rounded-[36px] border border-orange-200 bg-[#fff8f1] px-6 py-10 text-center shadow-[0_20px_60px_rgba(8,20,47,.06)] md:px-12 md:py-14">
 
-            <section className="rounded-[36px] border border-green-200 bg-green-50 px-6 py-10 text-center shadow-[0_20px_60px_rgba(8,20,47,.06)] md:px-12 md:py-14">
-
-              {/* Success Icon */}
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-600 text-white shadow-[0_12px_35px_rgba(22,163,74,.22)]">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white shadow-[0_12px_35px_rgba(255,90,18,.22)]">
                 <Check className="size-8" />
               </div>
 
-              {/* Heading */}
-              <h1 className="mt-6 font-display text-3xl font-bold tracking-tight text-ink md:text-4xl">
-                Consultation Booked Successfully
+              <p className="mt-6 text-xs font-bold uppercase tracking-[0.18em] text-primary">
+                Pending Review
+              </p>
+
+              <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-ink md:text-4xl">
+                Consultation Request Received
               </h1>
 
               <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-ink/60 md:text-base">
-                Your consultation with Laiba Hashmi has been
-                booked successfully. Please check your email
-                for the Calendly confirmation and meeting
-                details.
+                Thank you, {fullName.trim()}. Your consultation request and
+                payment proof have been received. Our team will verify the
+                payment before confirming and scheduling your consultation.
+                Once approved, the meeting details will be shared with you.
               </p>
 
-              {/* Booking Details */}
               <div className="mx-auto mt-8 max-w-xl rounded-[28px] bg-white p-6 text-left shadow-sm md:p-8">
-
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
-                  Booking Details
+                  Request Details
                 </p>
 
                 <h2 className="mt-4 font-display text-xl font-bold text-ink">
                   {selectedOption.title}
                 </h2>
 
-                <div className="mt-5 space-y-2">
-                  <p className="text-sm text-ink/60">
-                    {formatFullDate(
-                      selectedSlot.startTime
-                    )}
-                  </p>
+                <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-2xl bg-[#f7f4ed] p-4">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-ink/40">
+                      Name
+                    </p>
+                    <p className="mt-2 break-words text-sm font-semibold text-ink">
+                      {fullName.trim()}
+                    </p>
+                  </div>
 
-                  <p className="text-sm text-ink/60">
-                    {formatTime(
-                      selectedSlot.startTime
-                    )}{" "}
-                    PKT
-                  </p>
+                  <div className="rounded-2xl bg-[#f7f4ed] p-4">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-ink/40">
+                      Email
+                    </p>
+                    <p className="mt-2 break-all text-sm font-semibold text-ink">
+                      {email.trim()}
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl bg-[#f7f4ed] p-4">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-ink/40">
+                      Requested Date
+                    </p>
+                    <p className="mt-2 text-sm font-semibold text-ink">
+                      {formatFullDate(selectedSlot.startTime)}
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl bg-[#f7f4ed] p-4">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-ink/40">
+                      Requested Time
+                    </p>
+                    <p className="mt-2 text-sm font-semibold text-ink">
+                      {formatTime(selectedSlot.startTime)} PKT
+                    </p>
+                  </div>
                 </div>
 
-                <p className="mt-5 text-2xl font-bold text-primary">
-                  {selectedOption.price}
-                </p>
+                <div className="mt-5 flex items-center justify-between gap-4 border-t border-black/[.06] pt-5">
+                  <span className="text-sm font-semibold text-ink/50">
+                    Consultation Fee
+                  </span>
+
+                  <span className="text-2xl font-bold text-primary">
+                    {selectedOption.price}
+                  </span>
+                </div>
               </div>
 
-              {/* Download Receipt */}
-              <button
-                type="button"
-                onClick={downloadReceipt}
-                className="mx-auto mt-8 flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-7 text-sm font-bold text-white shadow-[0_12px_30px_rgba(255,90,18,.18)] transition hover:-translate-y-0.5 hover:opacity-90"
-              >
-                <Download className="size-4" />
-                Download Receipt
-              </button>
+              <div className="mx-auto mt-8 flex max-w-xl flex-col justify-center gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={downloadReceipt}
+                  className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-7 text-sm font-bold text-white shadow-[0_12px_30px_rgba(255,90,18,.18)] transition hover:-translate-y-0.5 hover:opacity-90"
+                >
+                  <Download className="size-4" />
+                  Download Request Receipt
+                </button>
 
-              <p className="mx-auto mt-4 max-w-lg text-xs leading-5 text-ink/40">
-                This receipt confirms your consultation booking
-                with YouthAura Labs.
+                <a
+                  href="/contact"
+                  className="flex min-h-12 items-center justify-center rounded-full border border-black/10 bg-white px-7 text-sm font-bold text-ink transition hover:border-primary hover:text-primary"
+                >
+                  Have a query? Contact us
+                </a>
+              </div>
+
+              <p className="mx-auto mt-5 max-w-xl text-xs leading-5 text-ink/40">
+                This confirms receipt of your consultation request only. Your
+                appointment is not confirmed until payment verification is
+                completed and YouthAura Labs sends the scheduling confirmation.
               </p>
 
             </section>
-
           </div>
         </div>
       </main>
@@ -811,7 +786,7 @@ const [duration] = useState<Duration>(30);
                       key={option.duration}
                       type="button"
                       onClick={() => {
-                        setBookingSuccess(false);
+                        setRequestSubmitted(false);
                         setSubmitError("");
                       }}
                       className={`relative rounded-3xl border p-6 text-left transition-all duration-300 ${
@@ -962,7 +937,7 @@ const [duration] = useState<Duration>(30);
                                   null
                                 );
 
-                                setBookingSuccess(
+                                setRequestSubmitted(
                                   false
                                 );
 
@@ -1037,7 +1012,7 @@ const [duration] = useState<Duration>(30);
                                   slot
                                 );
 
-                                setBookingSuccess(
+                                setRequestSubmitted(
                                   false
                                 );
 
@@ -1326,7 +1301,7 @@ const [duration] = useState<Duration>(30);
                     <input
                       id="paymentProof"
                       type="file"
-                      accept=".pdf,.jpg,.jpeg,.png,.webp"
+                      accept="image/*,.pdf"
                       onChange={(e) =>
                         setPaymentProof(
                           e.target.files?.[0] ??
@@ -1433,9 +1408,10 @@ const [duration] = useState<Duration>(30);
                 )}
 
                 <p className="mx-auto mt-3 max-w-2xl text-center text-xs leading-5 text-ink/45">
-  Your consultation request will be submitted for payment
-  verification. The appointment will only be scheduled after approval.
-</p>
+                  Submitting this request does not confirm the appointment.
+                  Payment proof must be verified first, and the requested slot will be
+                  re-checked before Calendly confirmation.
+                </p>
 
               </section>
             </>

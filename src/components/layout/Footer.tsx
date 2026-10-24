@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   ArrowUpRight,
+  Facebook,
   Instagram,
   Linkedin,
   Mail,
@@ -130,6 +131,18 @@ export default function Footer() {
 
             {/* Social Media */}
             <div className="mt-5 flex gap-2">
+              {/* Facebook */}
+              <a
+                href="https://www.facebook.com/share/1C1HUxXZh8/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="YouthAura Labs Facebook"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/60 transition hover:border-primary hover:text-primary"
+              >
+                <Facebook className="size-4" />
+              </a>
+
+              {/* Instagram */}
               <a
                 href="https://www.instagram.com/youthaura_labs?cplk=MTc1cWQxbzlnNTRnbw=="
                 target="_blank"
@@ -140,6 +153,7 @@ export default function Footer() {
                 <Instagram className="size-4" />
               </a>
 
+              {/* YouTube */}
               <a
                 href="https://youtube.com/@youthauralabs?si=k7yWnoaGFV0XaVEp"
                 target="_blank"
@@ -150,6 +164,7 @@ export default function Footer() {
                 <Youtube className="size-4" />
               </a>
 
+              {/* LinkedIn */}
               <a
                 href="https://www.linkedin.com/company/youth-aura-labs/"
                 target="_blank"

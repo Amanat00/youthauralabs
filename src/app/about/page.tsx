@@ -3,7 +3,6 @@ import {
   ArrowRight,
   BadgeCheck,
   Compass,
-  Eye,
   Flame,
   HeartHandshake,
   Lightbulb,
@@ -14,6 +13,8 @@ import {
   Users,
 } from "lucide-react";
 import FinalCTA from "@/components/ui/FinalCTA";
+import FounderSection from "@/components/ui/FounderSection";
+
 
 export const metadata = {
   title: "About YouthAura Labs — Mission, Story & Values",
@@ -115,8 +116,11 @@ export default function AboutPage() {
         <div className="grid gap-10 lg:grid-cols-[.75fr_1.25fr]">
           <div>
             <span className="eyebrow">Our story</span>
-            <h2 className="section-title mt-5">The gap was never intelligence. It was exposure.</h2>
+            <h2 className="section-title mt-5">
+              The gap was never intelligence. It was exposure.
+            </h2>
           </div>
+
           <div className="grid gap-4">
             {[
               [
@@ -139,7 +143,10 @@ export default function AboutPage() {
                 key={n}
                 className="grid gap-4 rounded-[28px] border border-black/[0.07] bg-white p-7 shadow-[0_14px_40px_rgba(8,20,47,.05)] md:grid-cols-[76px_1fr]"
               >
-                <span className="font-display text-lg font-bold text-primary">{n}</span>
+                <span className="font-display text-lg font-bold text-primary">
+                  {n}
+                </span>
+
                 <div>
                   <h3 className="text-2xl font-bold text-ink">{t}</h3>
                   <p className="mt-3 leading-7 text-slate-500">{d}</p>
@@ -232,34 +239,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="section-space site-shell">
-        <div className="overflow-hidden rounded-[38px] bg-[#fff0e7] p-8 md:p-12 lg:p-14">
-          <div className="grid gap-8 lg:grid-cols-[.6fr_1.4fr]">
-            <div>
-              <div className="flex h-24 w-24 items-center justify-center rounded-[28px] bg-ink font-display text-2xl font-bold text-primary">
-                YA
-              </div>
-            </div>
-            <div>
-              <span className="eyebrow">Founder story</span>
-              <h2 className="mt-4 text-3xl font-bold text-ink">This block is ready for the real founder story.</h2>
-              <p className="mt-4 max-w-2xl leading-7 text-slate-600">
-                Replace this copy with the founder’s real name, photo, background and why YouthAura Labs was started. The layout is intentionally launch-ready while keeping the content clearly marked as a genuine-content placeholder.
-              </p>
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <Link href="/contact" className="btn-dark">
-                  Partner with YouthAura Labs
-                  <ArrowRight className="size-4" />
-                </Link>
-                <Link href="/community" className="btn-outline">
-                  Explore the community
-                  <ArrowRight className="size-4" />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <FounderSection />
 
       <FinalCTA title="Build a stronger start to your career." />
     </div>

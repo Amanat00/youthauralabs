@@ -119,10 +119,8 @@ export default function Navbar() {
   const pathname = usePathname();
 
   const [open, setOpen] = useState(false);
-
   const [scrolled, setScrolled] =
     useState(false);
-
   const [megaOpen, setMegaOpen] =
     useState(false);
 
@@ -133,9 +131,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(
-        window.scrollY > 14
-      );
+      setScrolled(window.scrollY > 14);
     };
 
     onScroll();
@@ -153,10 +149,6 @@ export default function Navbar() {
     };
   }, []);
 
-  /*
-   * Close desktop and mobile menus
-   * whenever the route changes.
-   */
   useEffect(() => {
     setOpen(false);
     setMegaOpen(false);
@@ -183,7 +175,6 @@ export default function Navbar() {
               : "border-white/60 bg-white/80 backdrop-blur-xl"
           }`}
         >
-          {/* Logo */}
           <Link
             href="/"
             onClick={() => {
@@ -203,9 +194,7 @@ export default function Navbar() {
             />
           </Link>
 
-          {/* Desktop Navigation */}
           <div className="hidden items-center gap-1 lg:flex">
-            {/* Home */}
             <Link
               href="/"
               onClick={() =>
@@ -220,7 +209,6 @@ export default function Navbar() {
               Home
             </Link>
 
-            {/* Programs Mega Menu */}
             <div
               className="relative"
               onMouseEnter={() =>
@@ -253,130 +241,128 @@ export default function Navbar() {
               </Link>
 
               {/* Hover Bridge */}
-              <div
-                className={`absolute left-1/2 top-full -translate-x-1/2 pt-4 ${
-                  megaOpen
-                    ? "block"
-                    : "hidden"
-                }`}
-              >
-                {/* Mega Menu */}
-                <div className="w-[820px] overflow-hidden rounded-[28px] border border-black/[.07] bg-white shadow-[0_30px_80px_rgba(8,20,47,.16)]">
-                  <div className="grid grid-cols-[240px_1fr]">
-                    {/* Left Overview */}
-                    <div className="bg-ink p-6 text-white">
-                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#ff9b68]">
-                        Programs
-                      </span>
+<div
+  className={`absolute left-1/2 top-full -translate-x-[46%] pt-4 ${
+    megaOpen
+      ? "block"
+      : "hidden"
+  }`}
+>
+  {/* Mega Menu */}
+  <div className="w-[960px] max-w-[calc(100vw-32px)] overflow-hidden rounded-[28px] border border-black/[.07] bg-white shadow-[0_30px_80px_rgba(8,20,47,.16)]">
+    <div className="grid grid-cols-[240px_1fr]">
 
-                      <h3 className="mt-4 font-display text-2xl font-bold leading-tight">
-                        Explore your
-                        learning path.
-                      </h3>
+      {/* Left Overview */}
+      <div className="bg-ink p-7 text-white">
+        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#ff9b68]">
+          Programs
+        </span>
 
-                      <p className="mt-3 text-sm leading-6 text-white/55">
-                        Choose a track and
-                        explore its structured
-                        roadmap, skills and
-                        learning direction.
-                      </p>
+        <h3 className="mt-4 font-display text-[23px] font-bold leading-tight">
+          Explore your
+          learning path.
+        </h3>
 
-                      <Link
-                        href="/programs"
-                        onClick={() =>
-                          setMegaOpen(false)
-                        }
-                        className="mt-7 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-xs font-bold text-ink transition hover:bg-[#fff0e7]"
-                      >
-                        View all programs
+        <p className="mt-4 text-sm leading-6 text-white/55">
+          Choose a track and
+          explore its structured
+          roadmap, skills and
+          learning direction.
+        </p>
 
-                        <ArrowRight className="size-3.5" />
-                      </Link>
-                    </div>
+        <Link
+          href="/programs"
+          onClick={() =>
+            setMegaOpen(false)
+          }
+          className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-xs font-bold text-ink transition hover:bg-[#fff0e7]"
+        >
+          View all programs
+          <ArrowRight className="size-3.5" />
+        </Link>
+      </div>
 
-                    {/* Roadmap Links */}
-                    <div className="p-5">
-                      <div className="mb-3 px-2">
-                        <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">
-                          Track Roadmaps
-                        </p>
+      {/* Roadmap Links */}
+      <div className="p-6">
+        <div className="mb-4 px-2">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">
+            Track Roadmaps
+          </p>
 
-                        <p className="mt-1 text-xs text-slate-400">
-                          Select a roadmap to
-                          explore.
-                        </p>
-                      </div>
+          <p className="mt-1 text-xs text-slate-400">
+            Select a roadmap to explore.
+          </p>
+        </div>
 
-                      <div className="grid grid-cols-2 gap-1.5">
-                        {roadmaps.map(
-                          (roadmap) => {
-                            const Icon =
-                              roadmap.icon;
+        <div className="grid grid-cols-3 gap-x-3 gap-y-2">
+          {roadmaps.map(
+            (roadmap) => {
+              const Icon =
+                roadmap.icon;
 
-                            const active =
-                              pathname ===
-                              roadmap.href;
+              const active =
+                pathname ===
+                roadmap.href;
 
-                            return (
-                              <Link
-                                key={
-                                  roadmap.href
-                                }
-                                href={
-                                  roadmap.href
-                                }
-                                onClick={() =>
-                                  setMegaOpen(
-                                    false
-                                  )
-                                }
-                                className={`group/item flex gap-3 rounded-2xl p-3 transition ${
-                                  active
-                                    ? "bg-primary/[0.08]"
-                                    : "hover:bg-[#f7f4ed]"
-                                }`}
-                              >
-                                <div
-                                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition ${
-                                    active
-                                      ? "bg-primary text-white"
-                                      : "bg-[#fff0e7] text-primary group-hover/item:bg-primary group-hover/item:text-white"
-                                  }`}
-                                >
-                                  <Icon className="size-[18px]" />
-                                </div>
-
-                                <div className="min-w-0">
-                                  <p
-                                    className={`text-sm font-bold ${
-                                      active
-                                        ? "text-primary"
-                                        : "text-ink"
-                                    }`}
-                                  >
-                                    {
-                                      roadmap.label
-                                    }
-                                  </p>
-
-                                  <p className="mt-1 line-clamp-2 text-[11px] leading-[17px] text-slate-400">
-                                    {
-                                      roadmap.description
-                                    }
-                                  </p>
-                                </div>
-                              </Link>
-                            );
-                          }
-                        )}
-                      </div>
-                    </div>
+              return (
+                <Link
+                  key={
+                    roadmap.href
+                  }
+                  href={
+                    roadmap.href
+                  }
+                  onClick={() =>
+                    setMegaOpen(
+                      false
+                    )
+                  }
+                  className={`group/item flex min-w-0 gap-2.5 rounded-2xl p-3 transition ${
+                    active
+                      ? "bg-primary/[0.08]"
+                      : "hover:bg-[#f7f4ed]"
+                  }`}
+                >
+                  <div
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition ${
+                      active
+                        ? "bg-primary text-white"
+                        : "bg-[#fff0e7] text-primary group-hover/item:bg-primary group-hover/item:text-white"
+                    }`}
+                  >
+                    <Icon className="size-[17px]" />
                   </div>
-                </div>
-              </div>
+
+                  <div className="min-w-0">
+                    <p
+                      className={`text-[13px] font-bold leading-[18px] ${
+                        active
+                          ? "text-primary"
+                          : "text-ink"
+                      }`}
+                    >
+                      {
+                        roadmap.label
+                      }
+                    </p>
+
+                    <p className="mt-1 line-clamp-2 text-[10.5px] leading-[16px] text-slate-400">
+                      {
+                        roadmap.description
+                      }
+                    </p>
+                  </div>
+                </Link>
+              );
+            }
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
             </div>
 
-            {/* Other Desktop Links */}
             {links
               .filter(
                 (link) =>
@@ -406,7 +392,6 @@ export default function Navbar() {
               })}
           </div>
 
-          {/* Desktop CTA */}
           <div className="hidden lg:block">
             <Link
               href="/apply"
@@ -416,12 +401,10 @@ export default function Navbar() {
               className="btn-primary !min-h-10 !px-5"
             >
               Apply for cohort
-
               <ArrowUpRight className="size-4" />
             </Link>
           </div>
 
-          {/* Mobile Toggle */}
           <button
             type="button"
             onClick={() => {
@@ -430,11 +413,6 @@ export default function Navbar() {
               );
 
               setMegaOpen(false);
-
-              /*
-               * Every time hamburger opens/closes,
-               * Programs starts collapsed.
-               */
               setMobileProgramsOpen(false);
             }}
             aria-label="Toggle menu"
@@ -449,11 +427,9 @@ export default function Navbar() {
           </button>
         </nav>
 
-        {/* Mobile Menu */}
         {open && (
           <div className="mt-2 max-h-[calc(100vh-120px)] overflow-y-auto rounded-2xl border border-black/10 bg-white p-4 shadow-2xl lg:hidden">
             <div className="flex flex-col gap-1">
-              {/* Home */}
               <Link
                 href="/"
                 onClick={() => {
@@ -465,7 +441,6 @@ export default function Navbar() {
                 Home
               </Link>
 
-              {/* Programs Accordion */}
               <div>
                 <button
                   type="button"
@@ -497,10 +472,8 @@ export default function Navbar() {
                   />
                 </button>
 
-                {/* Hidden by default */}
                 {mobileProgramsOpen && (
                   <div className="mt-2 rounded-2xl bg-[#faf8f3] p-2">
-                    {/* Main Programs Page */}
                     <Link
                       href="/programs"
                       onClick={() => {
@@ -512,7 +485,6 @@ export default function Navbar() {
                       className="mb-1 flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold text-ink transition hover:bg-white"
                     >
                       View all programs
-
                       <ArrowRight className="size-4 text-primary" />
                     </Link>
 
@@ -544,7 +516,6 @@ export default function Navbar() {
                                 setMobileProgramsOpen(
                                   false
                                 );
-
                                 setOpen(
                                   false
                                 );
@@ -579,7 +550,6 @@ export default function Navbar() {
                 )}
               </div>
 
-              {/* Community */}
               <Link
                 href="/community"
                 onClick={() => {
@@ -591,7 +561,6 @@ export default function Navbar() {
                 Community
               </Link>
 
-              {/* About */}
               <Link
                 href="/about"
                 onClick={() => {
@@ -603,7 +572,6 @@ export default function Navbar() {
                 About
               </Link>
 
-              {/* Contact */}
               <Link
                 href="/contact"
                 onClick={() => {
@@ -615,7 +583,6 @@ export default function Navbar() {
                 Contact
               </Link>
 
-              {/* Apply CTA */}
               <Link
                 href="/apply"
                 onClick={() => {
@@ -625,7 +592,6 @@ export default function Navbar() {
                 className="btn-primary mt-3 w-full"
               >
                 Apply for cohort
-
                 <ArrowUpRight className="size-4" />
               </Link>
             </div>

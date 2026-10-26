@@ -32,6 +32,20 @@ const tracks = [
     "freelancing",
   ],
   [
+    "Project Management",
+    "Plan, coordinate and communicate a small project with structure.",
+    Target,
+    "Management",
+    "project-management",
+  ],
+  [
+    "AI Automation",
+    "Build useful AI-powered workflows for practical tasks.",
+    Workflow,
+    "AI",
+    "ai-automation",
+  ],
+  [
     "E-commerce",
     "Understand the building blocks of selling products online.",
     ShoppingBag,
@@ -60,25 +74,11 @@ const tracks = [
     "graphic-designing",
   ],
   [
-    "AI Automation",
-    "Build useful AI-powered workflows for practical tasks.",
-    Workflow,
-    "AI",
-    "ai-automation",
-  ],
-  [
     "Applied AI Across Industries",
     "Learn how AI can support work in different professional contexts.",
     Bot,
     "AI",
     "applied-ai-across-industries",
-  ],
-  [
-    "Project Management",
-    "Plan, coordinate and communicate a small project with structure.",
-    Target,
-    "Management",
-    "project-management",
   ],
   [
     "Web Development Awareness",

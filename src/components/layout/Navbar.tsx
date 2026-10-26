@@ -51,6 +51,20 @@ const roadmaps = [
     icon: BriefcaseBusiness,
   },
   {
+    href: "/programs/project-management",
+    label: "Project Management",
+    description:
+      "Plan, organize and deliver work effectively.",
+    icon: ClipboardCheck,
+  },
+  {
+    href: "/programs/ai-automation",
+    label: "AI Automation",
+    description:
+      "Use AI tools to automate modern workflows.",
+    icon: Bot,
+  },
+  {
     href: "/programs/e-commerce",
     label: "E-commerce",
     description:
@@ -79,25 +93,11 @@ const roadmaps = [
     icon: Palette,
   },
   {
-    href: "/programs/ai-automation",
-    label: "AI Automation",
-    description:
-      "Use AI tools to automate modern workflows.",
-    icon: Bot,
-  },
-  {
     href: "/programs/applied-ai-across-industries",
     label: "Applied AI Across Industries",
     description:
       "Explore practical AI use across industries.",
     icon: BrainCircuit,
-  },
-  {
-    href: "/programs/project-management",
-    label: "Project Management",
-    description:
-      "Plan, organize and deliver work effectively.",
-    icon: ClipboardCheck,
   },
   {
     href: "/programs/web-development-awareness",

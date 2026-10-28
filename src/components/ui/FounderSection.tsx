@@ -7,7 +7,6 @@ import {
   GraduationCap,
   MapPin,
   Sparkles,
-  Trophy,
 } from "lucide-react";
 
 export default function FounderSection() {
@@ -37,7 +36,7 @@ export default function FounderSection() {
           </p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[0.82fr_1.18fr]">
+        <div className="grid gap-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
           {/* LEFT — Founder Card */}
           <div className="relative overflow-hidden rounded-[32px] bg-ink p-7 text-white md:p-8">
             <div className="absolute right-0 top-0 h-44 w-44 rounded-full bg-primary/20 blur-3xl" />
@@ -60,13 +59,12 @@ export default function FounderSection() {
               </p>
 
               <p className="mt-6 max-w-sm text-[15px] leading-7 text-white/65">
-                Laiba grew up in Okara with big ambitions but no clear roadmap.
-                Her own search for practical skills, real-world experience and
-                better opportunities eventually became the foundation of
-                YouthAura Labs.
+                I started in Okara with big dreams and no clear roadmap.
+                My own search for practical skills, real-world experience,
+                and better opportunities eventually became the foundation
+                of YouthAura Labs.
               </p>
 
-              {/* Founder details */}
               <div className="mt-8 space-y-3">
                 <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/[0.07] text-primary">
@@ -77,6 +75,7 @@ export default function FounderSection() {
                     <p className="text-[10px] font-bold uppercase tracking-[.14em] text-white/35">
                       From
                     </p>
+
                     <p className="mt-0.5 text-sm font-bold text-white">
                       Okara, Pakistan
                     </p>
@@ -92,6 +91,7 @@ export default function FounderSection() {
                     <p className="text-[10px] font-bold uppercase tracking-[.14em] text-white/35">
                       Studied
                     </p>
+
                     <p className="mt-0.5 text-sm font-bold text-white">
                       Business &amp; Information Technology
                     </p>
@@ -107,6 +107,7 @@ export default function FounderSection() {
                     <p className="text-[10px] font-bold uppercase tracking-[.14em] text-white/35">
                       Built through
                     </p>
+
                     <p className="mt-0.5 text-sm font-bold text-white">
                       Freelancing, clients &amp; AI
                     </p>
@@ -118,114 +119,131 @@ export default function FounderSection() {
                 href="/book-laiba"
                 className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-white transition hover:opacity-90"
               >
-                Consult Laiba
+                Book a consultation
                 <ArrowUpRight className="size-4" />
               </Link>
             </div>
           </div>
 
-          {/* RIGHT — Story */}
-          <div className="rounded-[32px] border border-black/[0.06] bg-white p-6 shadow-[0_18px_50px_rgba(8,20,47,.06)] md:p-8">
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-[.16em] text-primary">
-                Her journey
+          {/* RIGHT — Original Founder Story */}
+          <div className="rounded-[32px] border border-black/[0.06] bg-white p-6 shadow-[0_18px_50px_rgba(8,20,47,.06)] md:p-8 lg:p-9">
+            <div className="space-y-5 text-[15px] leading-7 text-slate-600 md:text-[16px] md:leading-8">
+              <p>
+                I grew up in Okara, a small city in Pakistan where
+                opportunities, especially for young people with ambitions
+                beyond the conventional path, can feel limited. For the
+                longest time, I believed that if I wanted to build something
+                big, I had to leave.
               </p>
 
-              <h3 className="mt-2 max-w-xl font-display text-[27px] font-bold leading-tight tracking-[-0.03em] text-ink md:text-[32px]">
-                Finding her own path before helping others find theirs.
-              </h3>
-            </div>
+              <p>
+                I wanted to get out, explore the world, and become someone
+                who could create opportunities rather than wait for them.
+                That ambition pushed me to work hard for admission to{" "}
+                <strong className="font-semibold text-ink">
+                  Punjab University in Lahore
+                </strong>
+                , one of the biggest milestones of my life at the time.
+              </p>
 
-            {/* Journey steps */}
-            <div className="mt-8 space-y-5">
-              <div className="grid gap-4 sm:grid-cols-[46px_1fr]">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#fff0e7] text-sm font-bold text-primary">
-                  01
-                </div>
+              <p>
+                I thought getting into a good university would be the
+                beginning of everything I&apos;d dreamed of. But as I
+                progressed through my degree in{" "}
+                <strong className="font-semibold text-ink">
+                  Business and Information Technology at IBIT
+                </strong>
+                , I found myself asking a difficult question: What am I
+                actually learning that will prepare me for the real world?
+              </p>
 
-                <div>
-                  <h4 className="font-bold text-ink">
-                    Looking beyond the conventional path
-                  </h4>
+              <p>
+                I didn&apos;t want to spend four years studying, graduate
+                with a degree, and end up searching for a conventional
+                corporate job that might not even exist in the city I wanted
+                to build my life in. I wanted to create something of my own,
+                but I had no roadmap for how to do it.
+              </p>
 
-                  <p className="mt-2 text-sm leading-7 text-slate-500">
-                    Growing up in Okara, Laiba believed that building
-                    something bigger might mean leaving her city. Getting
-                    admission to Punjab University in Lahore felt like an
-                    important first step.
-                  </p>
-                </div>
-              </div>
+              <p>
+                So, during my third semester, I started exploring beyond the
+                classroom. I stepped into{" "}
+                <strong className="font-semibold text-ink">
+                  freelancing
+                </strong>
+                , learned practical skills, worked with international clients,
+                and gradually found my way into{" "}
+                <strong className="font-semibold text-ink">
+                  business and AI automation
+                </strong>
+                . I started discovering opportunities I didn&apos;t even know
+                existed when I was growing up.
+              </p>
 
-              <div className="border-t border-black/[0.06]" />
+              <p>
+                And somewhere along the way, my biggest realization came:
+                I&apos;d spent years wanting to escape my city because I
+                thought it was the limitation. I was beginning to understand
+                that the real limitation was believing opportunities had to
+                exist around me before I could create them.
+              </p>
 
-              <div className="grid gap-4 sm:grid-cols-[46px_1fr]">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#fff0e7] text-sm font-bold text-primary">
-                  02
-                </div>
+              <p>
+                The internet had opened doors that geography couldn&apos;t
+                close. I could work with people across the world while sitting
+                in my own city. I could learn skills that weren&apos;t being
+                taught in my classrooms. I could build something bigger than
+                my surroundings had ever shown me was possible.
+              </p>
 
-                <div>
-                  <h4 className="font-bold text-ink">
-                    Exploring beyond the classroom
-                  </h4>
-
-                  <p className="mt-2 text-sm leading-7 text-slate-500">
-                    During her third semester at IBIT, she started exploring
-                    freelancing, practical skills, international client work,
-                    business and AI automation — areas that showed her a very
-                    different side of what was possible.
-                  </p>
-                </div>
-              </div>
-
-              <div className="border-t border-black/[0.06]" />
-
-              <div className="grid gap-4 sm:grid-cols-[46px_1fr]">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#fff0e7] text-sm font-bold text-primary">
-                  03
-                </div>
-
-                <div>
-                  <h4 className="font-bold text-ink">
-                    Turning that experience into YouthAura Labs
-                  </h4>
-
-                  <p className="mt-2 text-sm leading-7 text-slate-500">
-                    She realized that geography did not have to define
-                    opportunity. That experience inspired her to create the
-                    kind of practical guidance she wished she had earlier —
-                    helping young people explore skills, opportunities and a
-                    clearer direction.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Award */}
-            <div className="mt-7 flex gap-4 rounded-[24px] bg-[#f7f4ed] p-5 md:p-6">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-ink text-[#ff9b68]">
-                <Trophy className="size-5" />
-              </div>
-
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-[.15em] text-primary">
-                  A meaningful milestone
-                </p>
-
-                <p className="mt-2 text-sm leading-6 text-slate-600">
-                  At 21, Laiba was nominated for the Iconic Women CEO Awards
-                  2026 in the Tech &amp; Digital category.
+              <div className="rounded-[22px] bg-[#f7f4ed] px-5 py-5 md:px-6">
+                <p className="leading-7 text-slate-600">
+                  At 21, being nominated for the{" "}
+                  <strong className="font-semibold text-ink">
+                    Iconic Women CEO Awards 2026
+                  </strong>{" "}
+                  in the Tech &amp; Digital category became a meaningful
+                  milestone in my journey. More than anything, it reminded me
+                  of the distance between the girl who once felt limited by
+                  her surroundings and the person she was becoming.
                 </p>
               </div>
+
+              <p className="font-semibold text-ink">
+                That journey is what inspired me to create YouthAura Labs.
+              </p>
+
+              <p>
+                I know how confusing it can be to be young today. There&apos;s
+                advice coming from everywhere, countless skills to learn, and
+                so many career paths that it&apos;s hard to know which
+                direction to take. You know you have potential, but figuring
+                out where to channel it can be overwhelming.
+              </p>
+
+              <p>
+                I wanted to create the kind of resource I wish I&apos;d had:
+                practical roadmaps built around real experience, helping
+                young people discover their strengths, explore opportunities,
+                develop valuable skills, and find a direction that feels
+                right for them.
+              </p>
+
+              <p>
+                I started in Okara with big dreams and no clear roadmap.
+                I had to find my own way, and now I want to make that journey
+                a little easier for others.
+              </p>
+
+              <blockquote className="mt-7 border-l-[3px] border-primary pl-5 font-display text-[21px] font-bold leading-[1.45] tracking-[-0.02em] text-ink md:text-[24px]">
+                “You don&apos;t need to have your whole life figured out to
+                begin. Start where you are, use what you have, and give
+                yourself a chance. Your beginnings don&apos;t define how far
+                you can go.”
+              </blockquote>
             </div>
 
-            {/* Quote */}
-            <blockquote className="mt-7 border-l-[3px] border-primary pl-5 font-display text-[21px] font-bold leading-[1.45] tracking-[-0.02em] text-ink md:text-[24px]">
-              “Start where you are, use what you have, and give yourself a
-              chance. Your beginnings don&apos;t define how far you can go.”
-            </blockquote>
-
-            <div className="mt-7 border-t border-black/[0.06] pt-6">
+            <div className="mt-8 border-t border-black/[0.06] pt-6">
               <Link
                 href="/programs"
                 className="inline-flex items-center gap-2 text-sm font-bold text-primary transition hover:gap-3"

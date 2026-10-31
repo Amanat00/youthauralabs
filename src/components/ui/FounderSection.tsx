@@ -116,7 +116,7 @@ export default function FounderSection() {
               </div>
 
               <Link
-                href="/book-laiba"
+                href="/consult-laiba"
                 className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-white transition hover:opacity-90"
               >
                 Book a consultation
